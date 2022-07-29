@@ -21,3 +21,7 @@ Route::get('/', function () {
 Auth::routes(['register' => false,'reset' => false,'verify' => false,]);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/shifts', [App\Http\Controllers\HomeController::class, 'index']);
+
+Route::get('/reports', [App\Http\Controllers\HomeController::class, 'index']);
