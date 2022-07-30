@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,11 +18,15 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', function () {
     return redirect('/login');
 });
+/**
+ * Static routes
+ */
+Route::prefix('organization')->middleware('guest')->group(function(){
+    Route::view('/{any}', 'static.index')->where('any', '.*');
+});
 
-Auth::routes(['register' => false,'reset' => false,'verify' => false,]);
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Auth::routes();
 
-Route::get('/shifts', [App\Http\Controllers\HomeController::class, 'index']);
+Route::get('/{any}',[HomeController::class, 'index'])->where('any', '.*');
 
-Route::get('/reports', [App\Http\Controllers\HomeController::class, 'index']);
