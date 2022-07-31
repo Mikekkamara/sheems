@@ -16,13 +16,13 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->string('email')->unique();
-            $table->string('company_email')->unique();
-            $table->string('writer_number')->unique();
-            $table->integer('national_id')->unique();
-            $table->integer('role')->comment('Admin : 1,Writer : 2');
-            $table->integer('status')->comment('Pending : 0,Active : 1,Blocked :2');
-            $table->string('phone_number')->unique();
+            $table->string('email')->nullable();
+            $table->smallInteger('title')->nullable();
+            $table->string('user_number')->unique();
+            $table->string('phone_number')->nullable();
+            $table->string('from')->nullable();
+            $table->string('profile')->nullable();
+            $table->foreignUuid('shift_id')->references('id')->on('shifts')->onDelete('cascade');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

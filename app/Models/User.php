@@ -22,11 +22,11 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'company_email',
-        'writer_number',
-        'national_id',
-        'role',
-        'status',
+        'title',
+        'from',
+        'user_number',
+        'profile',
+        'shift_id',
         'phone_number',
         'password',
     ];
@@ -50,13 +50,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function proficiencies(){
-
-        return $this->hasOne(Proficiency::class);
-    }
-
-    public function ratings()
-    {
-        return $this->hasMany(Rating::class);
+    public function attendances(){
+        return $this->hasMany(Attendance::class);
     }
 }

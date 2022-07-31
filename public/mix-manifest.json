@@ -1,4 +1,11 @@
 {
     "/js/app.js": "/js/app.js",
-    "/css/app.css": "/css/app.css"
+    "/css/app.css": "/css/app.css",
+    "/js/Login.js": "/js/Login.js",
+    "/js/Home.js": "/js/Home.js",
+    "/js/TheTableHome.js": "/js/TheTableHome.js",
+    "/js/Clock.js": "/js/Clock.js",
+    "/js/ClockUser.js": "/js/ClockUser.js",
+    "/js/HomeMount.js": "/js/HomeMount.js",
+    "/js/Header.js": "/js/Header.js"
 }

@@ -39,9 +39,9 @@
      style="top:0; z-index: 100;">
     <!-- Start -->
     <div>
-        <a href="{{ url('/') }}" class="nav-link text-dark p-0">
-            <img src="{{ asset('assest/WordVille.jpeg') }}" alt="wordville logo" class="img-fluid"
-                 style="height: 65px; filter: contrast(120%);">
+        <a href="{{ url('/') }}" class="nav-link text-dark p-0 m-2 d-flex flex-row align-items-center">
+            <img src="{{ asset('android-chrome-192x192.png') }}" alt="Sheems logo" class="img-fluid rounded-circle m-1"
+                 style="height: 50px; filter: contrast(120%);">
         </a>
     </div>
     <!-- Start -->
@@ -58,7 +58,7 @@
 <script>
     window.Laravel = {!! json_encode([
             'csrfToken' => csrf_token(),
-            'role' => Auth::check() ? Auth::user()->role : 0
+            'status' => Auth::check() ? 1 : 0
         ]) !!};
 </script>
 </body>

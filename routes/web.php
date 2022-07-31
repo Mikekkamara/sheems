@@ -26,7 +26,7 @@ Route::prefix('organization')->middleware('guest')->group(function(){
 });
 
 
-Auth::routes();
+Auth::routes([ 'register' =>  false ]);
 
 Route::get('/{any}',[HomeController::class, 'index'])->where('any', '.*');
 

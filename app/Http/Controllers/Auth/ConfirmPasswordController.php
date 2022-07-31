@@ -22,7 +22,7 @@ class ConfirmPasswordController extends Controller
     use ConfirmsPasswords;
 
     /**
-     * Where to redirect writers when the intended url fails.
+     * Where to redirect users when the intended url fails.
      *
      * @var string
      */

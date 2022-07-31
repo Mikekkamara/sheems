@@ -8,12 +8,9 @@ import Vuex from "vuex";
 import Vuesax  from 'vuesax';
 import StoreData from './store';
 import router from './router.js';
+import VueTimeago from 'vue-timeago';
 import PrimeVue from 'primevue/config';
 import BootstrapVue  from 'bootstrap-vue';
-import IndexHome from './components/home/Index.vue';
-import IndexHeader from './components/header/Index.vue';
-
-
 
 
 /**
@@ -30,12 +27,16 @@ Vue.use(Vuex);
 Vue.use(Vuesax);
 Vue.use(PrimeVue);
 Vue.use(BootstrapVue);
+Vue.use(VueTimeago, {
+    name: 'Timeago',
+    locale: 'en',
+});
 
 /**
  * Vue Warning handler
  */
 Vue.config.warnHandler = message => {
-    console.log(message);
+    // console.log(message);
 };
 const store = new Vuex.Store(StoreData);
 /**
@@ -43,10 +44,6 @@ const store = new Vuex.Store(StoreData);
  */
 
 window.onload = function(){
-    const register = new Vue({
-        el: '#register',
-        router
-    });
     const login = new Vue({
         el: '#login',
         router
@@ -55,17 +52,16 @@ window.onload = function(){
         el: '#home',
         store,
         router,
-        components: { IndexHome }
+        components: {
+            'IndexHome': () => import(/* webpackChunkName: 'HomeMount' */ './components/home/Index.vue')
+        }
     });
     const header = new Vue({
         el: '#header',
         store,
         router,
-        components: { IndexHeader }
-    });
-    const organization = new Vue({
-        el: '#organization',
-        store,
-        router
+        components: {
+            'IndexHeader': () => import(/* webpackChunkName: 'Header' */ './components/header/Index.vue')
+        }
     });
 }
