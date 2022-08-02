@@ -190,7 +190,7 @@
             this.$nextTick(function (){
                 this.$store.dispatch('getSessions', globalThis.slug).then(reponse => {
                     globalThis.loading = false
-                })
+                });
             });
         },
         methods:{

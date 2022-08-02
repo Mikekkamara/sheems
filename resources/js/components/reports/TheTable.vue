@@ -97,7 +97,7 @@
                                                 </vs-td>
                                                 <vs-td>
                                                     <h6 class="m-0 text-center">
-                                                        {{ user.shift.sessions.find(item => item.id === attendance.session_id).name }}
+                                                        {{ sessions.find(item => item.id === attendance.session_id).name }}
                                                     </h6>
                                                 </vs-td>
                                                 <vs-td>
@@ -155,7 +155,7 @@ export default {
         }
     },
     computed:{
-        ...mapGetters(['allUsers', 'allShifts']),
+        ...mapGetters(['allUsers', 'allShifts', 'sessions']),
         users(){
             let type = this.$route.params.type;
             return type === 'attendees' ? this.attendees : type === 'absentees' ? this.absentees : this.defaulters;

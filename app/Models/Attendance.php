@@ -12,6 +12,8 @@ class Attendance extends Model
 
     protected $fillable = ['user_id', 'session_id', 'start', 'end'];
 
+    protected $dates = [ 'start', 'end' ];
+    
     public function user(){
         return $this->hasOne(User::class);
     }

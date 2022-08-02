@@ -97,8 +97,12 @@ export default {
 
     },
     async mounted(){
-        console.log(this.allShifts[0])
-        // this.$store.dispatch('getSessions', this.allShifts[0].id)
+        let globalThis = this;
+        this.$nextTick(() => {
+            // console.log(globalThis.allShifts);
+            // globalThis.$store.dispatch('getSessions', globalThis.allShifts[0].id)
+        })
+        
     }
 }
 </script>
