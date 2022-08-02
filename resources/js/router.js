@@ -23,7 +23,7 @@ export default new VueRouter({
                 {
                     path: 'all',
                     name: 'homeAll',
-                    component: () => import(/* webpackChunkName: 'TheTableHome' */ './components/users/TheTable')
+                    component: () => import(/* webpackChunkName: 'The Table Home' */ './components/users/TheTable')
                 },
                 {
                     path: 'clock',
@@ -35,7 +35,29 @@ export default new VueRouter({
                             path: ':slug',
                             name: 'clockUser',
                             props: true,
-                            component: () => import(/* webpackChunkName: 'ClockUser' */ './components/users/User')
+                            component: () => import(/* webpackChunkName: 'Clock User' */ './components/users/User')
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            path: '/reports',
+            name: 'reports',
+            props: true,
+            component: () => import(/* webpackChunkName: 'Reports' */ './components/reports/Index'),
+            children: [
+                {
+                    path: ':slug',
+                    name: 'shiftDetails',
+                    props: true,
+                    component: () => import(/* webpackChunkName: 'Shift Details' */ './components/reports/details'),
+                    children: [
+                        {
+                            path: ':type',
+                            name: 'userReports',
+                            props: true,
+                            component: () => import(/* webpackChunkName: 'User Reports'*/ './components/reports/TheTable')
                         }
                     ]
                 }

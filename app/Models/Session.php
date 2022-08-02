@@ -10,7 +10,7 @@ class Session extends Model
 {
     use HasFactory, Uuids;
 
-    protected $fillable = ['shift_id', 'start', 'end'];
+    protected $fillable = ['shift_id', 'name', 'start', 'end'];
 
     protected $dates = [
         'start',

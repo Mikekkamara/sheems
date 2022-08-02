@@ -10,6 +10,8 @@ class Attendance extends Model
 {
     use HasFactory, Uuids;
 
+    protected $fillable = ['user_id', 'session_id', 'start', 'end'];
+
     public function user(){
         return $this->hasOne(User::class);
     }

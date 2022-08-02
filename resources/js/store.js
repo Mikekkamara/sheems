@@ -10,7 +10,12 @@ export default{
         /**
          * Shifts
          */
-        shifts: []
+        shifts: [],
+        sessions:{
+            shiftId: '',
+            data: [],
+            users: []
+        }
     },
     getters: {
         csrfToken(){
@@ -33,6 +38,12 @@ export default{
         ongoingShift(state){
             let ongoing = state.shifts.find(shift => shift.ongoing === 1);
             return ongoing === undefined ? false : ongoing;
+        },
+        sessions(state){
+            return state.sessions.data;
+        },
+        sessionsUsers(state){
+            return state.sessions.users
         }
     },
     mutations: {
@@ -50,6 +61,11 @@ export default{
         //Mutate Shifts
         setShifts(state, payload){
             state.shifts = payload;
+        },
+        setSessions(state, payload){
+            state.sessions.shiftId = payload.id;
+            state.sessions.data = payload.sessions;
+            state.sessions.users = payload.users;
         }
     },
     actions: {
@@ -66,10 +82,31 @@ export default{
         //Create a new user
         async createUser(context, payload){
             return await axios.post('/api/v1/user/create', payload, { headers: { "Content-Type" : "multipart/form-data" } }).then(response => {
-                console.log(response.data);
+                return response;
             });
         },
 
+        //Update profile
+        async updateProfile(context, payload){
+            return await axios.post(`/api/v1/user/update/${payload.id}`, payload.data,{ headers: { "Content-type":"multipart/form-data; charset=utf-8; boundary=" + Math.random().toString().substr(2) } }).then(response => {
+                // console.log(response.data);
+                return response;
+            })
+        },
+        checkIn(context, payload){
+            return axios.get(`/api/v1/user/check-in/${payload}`).then(res => {
+                context.dispatch('getUsers');
+                context.dispatch('getShifts');
+                return res;
+            });
+        },
+        checkOut(context, payload){
+            return axios.get(`/api/v1/user/check-out/${payload}`).then(res => {
+                context.dispatch('getUsers');
+                context.dispatch('getShifts');
+                return res;
+            });
+        },
         /**
          * Shifts
          */
@@ -78,6 +115,13 @@ export default{
             return axios.get('/api/v1/shift').then(response => {
                 context.commit('setShifts', response.data);
             });
+        },
+
+        //Get sessions
+        getSessions(context, payload){
+            return axios.get(`/api/v1/shift/sessions/${payload}`).then(response => {
+                context.commit('setSessions', response.data);
+            })
         },
 
         //end Shift

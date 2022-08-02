@@ -20,7 +20,7 @@
 							<label for="email" class="flex-grow-1 my-1">
 								<h5 class="m-0 text-start"> <i class="fa-duotone fa-key-skeleton"></i> Password</h5>
 							</label>
-							<vs-input v-model="credentials.password" maxlength="8" name="password" type="password" placeholder="********"></vs-input>
+							<vs-input v-model="credentials.password" maxlength="17" name="password" type="password" placeholder="********"></vs-input>
 						</div>
 						<small class="fw-bold text-danger" v-if="errors.email">
 							{{ errors.email[0] }}
@@ -59,7 +59,7 @@ export default {
 			login: false,
 			credentials: {
 				email: 'mikekkamara@gmail.com',
-				password: 'secret',
+				password: '',
 				remember: false
 			}
 		}

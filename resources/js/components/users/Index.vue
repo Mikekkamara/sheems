@@ -22,7 +22,7 @@
 
                     <div
                         v-if="shift.loading === false"
-                        class="d-flex flex-row justify-content-center align-items-center p-2 m-2 mb-4"
+                        class="d-flex flex-column flex-md-row justify-content-center align-items-center p-2 m-2 mb-4"
                     >
                         <vs-button
                             v-for="shift in allShifts"
@@ -85,7 +85,7 @@
                                 Checked In:
                             </span>
                         </h6>
-                        20 of 40 users
+                        Checked in {{ clockedInUsers.length }} of {{ shiftUsers.length }}
                     </div>
                     <div class="d-flex flex-row align-items-center p-2">
                         <vs-button
@@ -135,7 +135,7 @@
         </div>
         <div>
             <transition>
-                <router-view></router-view>
+                <router-view :key="$route.path"></router-view>
             </transition>
         </div>
         <b-modal
@@ -155,7 +155,7 @@
                 <!--      Token        -->
                 <input hidden name="_token" :value="csrfToken"/>
 
-                <div class="d-flex flex-row align-items-center justify-content-evenly">
+                <div class="d-flex flex-column flex-md-row align-items-center justify-content-evenly">
                     <div>
                         <h6 class="fw-bold d-flex flex-row align-items-center">
                             <i class="fa-duotone fa-signature fa-2x"></i>
@@ -178,7 +178,7 @@
                     </h6>
                     <input type="file" name="profile" ref="profile" class="form-control border-0" style="border-radius: 10px;"/>
                 </div>
-                <div class="d-flex flex-row align-items-center justify-content-evenly">
+                <div class="d-flex flex-column flex-md-row align-items-center justify-content-evenly">
                     <div>
                         <h6 class="fw-bold d-flex flex-row align-items-center">
                             <i class="fa-duotone fa-location-dot fa-2x"></i>
@@ -194,6 +194,30 @@
                         <vs-input type="tel" name="phone_number"  v-model="createForm.phone"></vs-input>
                     </div>
                 </div>
+                <div class="d-flex flex-column flex-md-row align-items-center justify-content-evenly my-2 p-2">
+                    <div class="flex-grow-1 m-2">
+                        <h6 class="fw-bold d-flex flex-row align-items-center">
+                            <i class="fa-duotone fa-user-group-crown fa-2x"></i>
+                            <span class="m-2">Title</span>
+                        </h6>
+                        <select name="title" id="title"  v-model="createForm.title" class="form-control border-0" style="border-radius: 10px;">
+                            <option value="0" selected>None</option>
+                            <option value="1" >Pastor</option>
+                            <option value="2" >Bishop</option>
+                        </select>
+                    </div>
+                    <div class="flex-grow-1 m-2">
+                        <h6 class="fw-bold d-flex flex-row align-items-center">
+                            <i class="fa-duotone fa-phone fa-2x"></i>
+                            <span class="m-2">Type</span>
+                        </h6>
+                        <select name="type" id="type"  v-model="createForm.type" class="form-control border-0" style="border-radius: 10px;">
+                            <option value="1" >Shift Leader</option>
+                            <option value="2" >Data Analyst</option>
+                            <option value="3" selected>Member</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="mb-3 container p-4">
                     <h6 class="fw-bold d-flex flex-row align-items-center">
                         <i class="fa-duotone fa-timer fa-2x"></i>
@@ -203,6 +227,7 @@
                     <datalist id="shift-list">
                         <option
                             v-for="(shift, index) in allShifts"
+                            :selected="index === 0"
                             :key="index"
                         >
                             {{ shift.name }}
@@ -250,6 +275,8 @@ export default {
                 name: '',
                 email: '',
                 from: '',
+                type: 3,
+                title: 0,
                 shift: '',
                 phone: '',
                 loading: false
@@ -260,7 +287,23 @@ export default {
         this.$store.dispatch('getShifts');
     },
     computed: {
-        ...mapGetters(['allUsers', 'allShifts', 'ongoingShift','csrfToken'])
+        ...mapGetters(['allUsers', 'allShifts', 'ongoingShift','csrfToken']),
+        shiftUsers(){
+            return this.allUsers.filter(user => user.shift_id === this.ongoingShift.id);
+        },
+        clockedInUsers(){
+            return this.shiftUsers.filter(user => {
+                let attendance = user.attendances.find(item => item.session_id === this.ongoingShift.ongoing_session);
+
+                if(attendance !== undefined){
+                    if(attendance.start !== null && attendance.end == null){
+                        return true;
+                    }
+                }else{
+                    return false;
+                }
+            })
+        }
     },
     methods: {
         createUser(){
@@ -270,7 +313,7 @@ export default {
 
             let {name, email, from, shift, phone} = this.createForm;
 
-            if(name === '' || email === '' || from === '' || shift === '' || phone === ''){
+            if(name === '' || from === '' || shift === '' || phone === ''){
                 this.errors = true;
                 this.createForm.loading = false;
             }else{
@@ -289,6 +332,8 @@ export default {
                 this.$store.dispatch('createUser', createForm).then(response => {
                     this.createForm = { name: '', email: '', from: '', shift: '', phone: '', loading: false};
                     this.createForm.loading = false;
+                    this.$bvModal.hide('add-user');
+
                 });
             }
 

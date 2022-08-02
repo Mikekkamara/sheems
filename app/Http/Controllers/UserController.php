@@ -16,7 +16,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = User::with('attendances')->get();
+        $user = User::with('attendances', 'shift.sessions')->get();
         return response($user, 200);
     }
 
@@ -47,10 +47,11 @@ class UserController extends Controller
         }else{
             $filename = 'default.png';
         }
-        return User::create([
+        User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'title' => $request->input('title'),
+            'type' => $request->input('type'),
             'user_number' => Str::random(2),
             'phone_number' => $request->input('phone_number'),
             'from' => $request->input('from'),
@@ -58,6 +59,7 @@ class UserController extends Controller
             'shift_id' => $request->input('shift'),
             'password' => Hash::make('secret')
         ]);
+        return response(User::with('attendances', 'shift.sessions')->get(), 200);
     }
 
     /**
@@ -66,9 +68,13 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show()
     {
-        //
+        $data = User::all();
+
+        foreach ($data as $dt){
+            $dt->update([ 'type' => 3, 'title' => 0]);
+        }
     }
 
     /**
@@ -91,7 +97,30 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+
+        $filename = '';
+
+        if ($request->file('profile')) {
+            $file = $request->file('profile');
+            $filename = date('YmdHi') . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/profile', $filename);
+        }else{
+            $filename = 'default.png';
+        }
+        $user->update([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'title' => $request->input('title'),
+            'type' => $request->input('type'),
+            'user_number' => Str::random(2),
+            'phone_number' => $request->input('phone_number'),
+            'from' => $request->input('from'),
+            'profile' => $filename,
+            'shift_id' => $request->input('shift')
+        ]);
+
+        return response(User::with('attendances', 'shift.sessions')->get(), 200);
     }
 
     /**

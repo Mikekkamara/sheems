@@ -29,11 +29,19 @@
                 {{ user.from }} &#8226; {{ user.phone_number}}
             </h6>
             <div class="container d-flex flex-row align-items-center justify-content-between">
-                <vs-button success flat>
+                <vs-button success flat v-if="isClockedIn === false" @click="clockIn()" :disabled="ongoingShift === false" :loading="clock.loading">
                     <h6 class="m-0 fw-bold d-flex flex-row align-items-center">
                         <i class="fa-duotone fa-timer fa-2x"></i>
                         <span class="m-2">
                             Clock In
+                        </span>
+                    </h6>
+                </vs-button>
+                <vs-button success flat v-else @click="clockOut()" :loading="clock.loading">
+                    <h6 class="m-0 fw-bold d-flex flex-row align-items-center">
+                        <i class="fa-duotone fa-timer fa-2x"></i>
+                        <span class="m-2">
+                            Clock Out
                         </span>
                     </h6>
                 </vs-button>
@@ -55,11 +63,48 @@ export default {
         return{
             loading: true,
             error: false,
-            user:{}
+            user:{},
+            clock: {
+                loading:false
+            }
         }
     },
     computed:{
-        ...mapGetters(['allUsers', 'allShifts'])
+        ...mapGetters(['allUsers', 'allShifts', 'ongoingShift']),
+        isClockedIn(){
+            if(this.currentSession.start === null){
+                return false
+            }else{
+                return true;
+            }
+        },
+        currentSession(){
+            return this.user.attendances.find(attendance => attendance.session_id === this.ongoingShift.ongoing_session);
+        }
+    },
+    methods: {
+        clockIn() {
+            this.clock.loading = true
+
+            this.$store.dispatch('checkIn', this.user.id).then(response => {
+                this.$router.push({ name: 'clock' });
+                this.openNotification(`<h5 class='m-0'>User</h5>`, `<h6 class='m-0'>Clocked In successfully</h6>`);
+            })
+        },
+        clockOut(){
+            this.clock.loading = true
+
+            this.$store.dispatch('checkOut', this.user.id).then(response => {
+                this.$router.push({ name: 'clock' });
+                this.openNotification(`<h5 class='m-0'>User</h5>`, `<h6 class='m-0'>Clocked out successfully</h6>`);
+            })
+        },
+        openNotification(title, text) {
+            const notification = this.$vs.notification({
+                title,
+                text
+            });
+        }
     },
     async mounted() {
         try {

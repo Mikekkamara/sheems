@@ -15,4 +15,12 @@ class Shift extends Model
     public function session(){
         return $this->hasOne(Session::class,'id', 'ongoing_session');
     }
+
+    public function sessions(){
+        return $this->hasMany(Session::class);
+    }
+
+    public function users(){
+        return $this->hasMany(User::class);
+    }
 }

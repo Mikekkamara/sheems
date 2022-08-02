@@ -16,6 +16,7 @@ class CreateSessionsTable extends Migration
         Schema::create('sessions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('shift_id')->references('id')->on('shifts')->onDelete('cascade');
+            $table->string('name');
             $table->string('start');
             $table->string('end')->nullable();
             $table->timestamps();

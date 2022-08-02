@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attendance;
 use App\Models\Session;
 use App\Models\Shift;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class ShiftController extends Controller
 {
@@ -25,7 +28,14 @@ class ShiftController extends Controller
             'name' => $request->input('name')
         ]);
     }
+    /**
+     * Return all shift's sessions
+     */
+    public function show($id){
+        $shifts = Shift::with('sessions', 'users.attendances')->find($id);
 
+        return response($shifts, 200);
+    }
     /**
      * Start a shift
      */
@@ -35,6 +45,7 @@ class ShiftController extends Controller
 
         $session = Session::create([
             'shift_id' => $id,
+            'name' => $shift->name . ' - ' . Str::random(3),
             'start' => Carbon::now()
         ]);
 
@@ -43,7 +54,21 @@ class ShiftController extends Controller
             'ongoing_session' => $session->id
         ]);
 
+        //Create Attendances
+
+        $users = User::where('shift_id', $shift->id)->get();
+
+        collect($users)->each(function ($user) use($session){
+            $this->createAttendances($user->id, $session->id);
+        });
+
         return response($session, 200);
+    }
+    public function createAttendances($user_id, $session_id){
+        return Attendance::create([
+            'user_id' => $user_id,
+            'session_id' => $session_id
+        ]);
     }
 
     /**

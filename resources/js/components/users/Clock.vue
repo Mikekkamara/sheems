@@ -13,7 +13,7 @@
                     autofocus
                     block
                     name="random_number"
-                    maxlength="2"
+                    maxlength="3"
                     type="text"
                     list="users-list"
                     v-model.trim="search"
@@ -83,6 +83,12 @@ export default {
                 }
             }
             this.loading = false
+        },
+        openNotification(title, text) {
+            const notification = this.$vs.notification({
+                title,
+                text
+            });
         }
     },
     watch:{

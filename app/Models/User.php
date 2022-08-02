@@ -23,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'title',
+        'type',
         'from',
         'user_number',
         'profile',
@@ -52,5 +53,9 @@ class User extends Authenticatable
 
     public function attendances(){
         return $this->hasMany(Attendance::class);
+    }
+
+    public function shift(){
+        return $this->belongsTo(Shift::class, 'shift_id');
     }
 }
