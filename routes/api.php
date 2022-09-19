@@ -41,6 +41,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/end-and-go-to-next/{id}/{next_id}', [ShiftController::class, 'goToNext']);
     });
 
+    Route::prefix('report')->group(function (){
+        Route::get('/', [ShiftController::class, 'generateReport']);
+    });
+
 });
 
 

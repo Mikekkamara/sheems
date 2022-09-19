@@ -19,4 +19,7 @@ class Session extends Model
     public function shift(){
         return $this->hasOne(Shift::class);
     }
+    public function attendances(){
+        return $this->hasMany(Session::class)->with('user');
+    }
 }
