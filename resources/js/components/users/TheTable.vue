@@ -45,7 +45,7 @@
                             <vs-th>
                                 <h6 class="m-0 mx-auto fw-bold">Type</h6>
                             </vs-th>
-                            <vs-th sort @click="users = $vs.sortData($event ,users, 'shift_id')">
+                            <vs-th sort @click="users = $vs.sortData($event, users, 'shift_id')">
                                 <h6 class="m-0 mx-auto fw-bold">Shift</h6>
                             </vs-th>
                         </vs-tr>
@@ -53,42 +53,55 @@
                     <template #tbody>
                         <vs-tr
                             v-for="(user, index) in $vs.getPage($vs.getSearch(users, search), pagination.page, pagination.max)"
-                            :key="index"
-                        >
+                            :key="index">
                             <vs-td>
                                 <b-avatar :src="`../../../../storage/profile/${user.profile}`"></b-avatar>
                             </vs-td>
                             <vs-td>
-                                <h6 class="m-0 text-center mx-auto" style="width: 150px;overflow: hidden;white-space:nowrap; text-overflow: ellipsis;">
-                                   {{ user.title == 1 ? 'Pastor ' :user.title == 2 ? 'Bishop' : '' }}
+                                <h6 class="m-0 text-center mx-auto"
+                                    style="width: 150px;overflow: hidden;white-space:nowrap; text-overflow: ellipsis;">
+                                    {{ user.title == 1 ? 'Pastor ' : user.title == 2 ? 'Bishop' : '' }}
                                     {{ user.name }}
                                 </h6>
                             </vs-td>
                             <vs-td>
-                                <h6 class="m-0 text-center mx-auto" style="width: 200px;overflow: hidden;white-space:nowrap; text-overflow: ellipsis;">
+                                <h6 class="m-0 text-center mx-auto"
+                                    style="width: 200px;overflow: hidden;white-space:nowrap; text-overflow: ellipsis;">
                                     {{ user.from }}
                                 </h6>
                             </vs-td>
                             <vs-td>
-                                <h6 class="m-0 p-1 text-center mx-auto" style="width: 250px;overflow: hidden;white-space:nowrap; text-overflow: ellipsis;">
+                                <h6 class="m-0 p-1 text-center mx-auto"
+                                    style="width: 250px;overflow: hidden;white-space:nowrap; text-overflow: ellipsis;">
                                     {{ user.phone_number }}
                                 </h6>
                             </vs-td>
                             <vs-td>
-                                <h6 class="m-0 p-1 text-center mx-auto" style="width: 250px;overflow: hidden;white-space:nowrap; text-overflow: ellipsis;">
+                                <h6 class="m-0 p-1 text-center mx-auto"
+                                    style="width: 250px;overflow: hidden;white-space:nowrap; text-overflow: ellipsis;">
                                     {{ user.user_number }}
                                 </h6>
                             </vs-td>
                             <vs-td>
-                                <h6 class="m-0 p-1 text-center mx-auto" style="width: 250px;overflow: hidden;white-space:nowrap; text-overflow: ellipsis;">
+                                <h6 class="m-0 p-1 text-center mx-auto"
+                                    style="width: 250px;overflow: hidden;white-space:nowrap; text-overflow: ellipsis;">
                                     <span class="badge bg-warning p-2" v-if="user.type == 1">
-                                        Shift Leader
+                                        Shift Leader / Keyboardists
                                     </span>
                                     <span class="badge bg-success p-2" v-else-if="user.type == 2">
                                         Data Analyst
                                     </span>
                                     <span class="badge bg-dark p-2" v-else-if="user.type == 3">
-                                        Member
+                                        Keyboardist
+                                    </span>
+                                    <span class="badge bg-dark p-2" v-else-if="user.type == 4">
+                                        Shift Leader / Worshippers
+                                    </span>
+                                    <span class="badge bg-dark p-2" v-else-if="user.type == 5">
+                                        Worshipper
+                                    </span>
+                                    <span class="badge bg-dark p-2" v-else-if="user.type == 6">
+                                        Violinist
                                     </span>
                                 </h6>
                             </vs-td>
@@ -127,10 +140,7 @@
                                             </vs-th>
                                         </template>
                                         <template #tbody>
-                                            <vs-tr
-                                                v-for="(attendance, index) in user.attendances"
-                                                :key="index"
-                                            >
+                                            <vs-tr v-for="(attendance, index) in user.attendances" :key="index">
                                                 <vs-td>
                                                     <h6 class="m-0 text-center">
                                                         {{ index + 1 }}
@@ -138,8 +148,10 @@
                                                 </vs-td>
                                                 <vs-td>
                                                     <h6 class="m-0 text-center">
-                                                        {{ user.shift.sessions.find(item => item.id === attendance.session_id).name }}
-                                                   </h6>
+                                                        {{ user.shift.sessions.find(item => item.id ===
+                                                                attendance.session_id).name
+                                                        }}
+                                                    </h6>
                                                 </vs-td>
                                                 <vs-td>
                                                     <h6 class="m-0 text-center">
@@ -159,26 +171,17 @@
                         </vs-tr>
                     </template>
                     <template #footer>
-                        <vs-pagination color="dark" v-model="pagination.page" :length="$vs.getLength(users, pagination.max)" />
+                        <vs-pagination color="dark" v-model="pagination.page"
+                            :length="$vs.getLength(users, pagination.max)" />
                     </template>
                 </vs-table>
             </div>
-            <b-modal
-                id="edit-user"
-                centered
-                hide-footer
-                hide-header-close
+            <b-modal id="edit-user" centered hide-footer hide-header-close
                 title-html="<h4 class='fw-bold m-2'><i class='fa-duotone fa-plus'></i> Edit User</h4>"
-                content-class="template-modal"
-                header-class="template-modal-header"
-            >
-                <form
-                    @submit.stop.prevent
-                    id="updateUserForm"
-                    method="post"
-                >
+                content-class="template-modal" header-class="template-modal-header">
+                <form @submit.stop.prevent id="updateUserForm" method="post">
                     <!--      Token        -->
-                    <input hidden name="_token" :value="csrfToken"/>
+                    <input hidden name="_token" :value="csrfToken" />
 
                     <div class="d-flex flex-column flex-md-row align-items-center justify-content-evenly">
                         <div>
@@ -201,7 +204,8 @@
                             <i class="fa-duotone fa-user fa-2x"></i>
                             <span class="m-2">Profile</span>
                         </h6>
-                        <input type="file" name="profile" ref="profileUpdate" class="form-control border-0" style="border-radius: 10px;"/>
+                        <input type="file" name="profile" ref="profileUpdate" class="form-control border-0"
+                            style="border-radius: 10px;" />
                     </div>
                     <div class="d-flex flex-column flex-md-row align-items-center justify-content-evenly">
                         <div>
@@ -216,7 +220,7 @@
                                 <i class="fa-duotone fa-phone fa-2x"></i>
                                 <span class="m-2">Phone Number</span>
                             </h6>
-                            <vs-input type="tel" name="phone_number"  v-model="edit.phone"></vs-input>
+                            <vs-input type="tel" name="phone_number" v-model="edit.phone"></vs-input>
                         </div>
                     </div>
                     <div class="d-flex flex-column flex-md-row align-items-center justify-content-evenly my-2 p-2">
@@ -225,10 +229,11 @@
                                 <i class="fa-duotone fa-user-group-crown fa-2x"></i>
                                 <span class="m-2">Title</span>
                             </h6>
-                            <select name="title" id="title"  v-model="edit.title" class="form-control border-0" style="border-radius: 10px;">
+                            <select name="title" id="title" v-model="edit.title" class="form-control border-0"
+                                style="border-radius: 10px;">
                                 <option value="0" selected>None</option>
-                                <option value="1" >Pastor</option>
-                                <option value="2" >Bishop</option>
+                                <option value="1">Pastor</option>
+                                <option value="2">Bishop</option>
                             </select>
                         </div>
                         <div class="flex-grow-1 m-2">
@@ -236,9 +241,10 @@
                                 <i class="fa-duotone fa-phone fa-2x"></i>
                                 <span class="m-2">Type</span>
                             </h6>
-                            <select name="type" id="type"  v-model="edit.type" class="form-control border-0" style="border-radius: 10px;">
-                                <option value="1" >Shift Leader</option>
-                                <option value="2" >Data Analyst</option>
+                            <select name="type" id="type" v-model="edit.type" class="form-control border-0"
+                                style="border-radius: 10px;">
+                                <option value="1">Shift Leader</option>
+                                <option value="2">Data Analyst</option>
                                 <option value="3" selected>Member</option>
                             </select>
                         </div>
@@ -248,12 +254,9 @@
                             <i class="fa-duotone fa-timer fa-2x"></i>
                             <span class="m-2">Shift</span>
                         </h6>
-                        <select name="shift" id="shift"  v-model="edit.shift" class="form-control border-0" style="border-radius: 10px;">
-                            <option
-                                v-for="(shift, index) in allShifts"
-                                :value="shift.id"
-                                :key="index"
-                            >
+                        <select name="shift" id="shift" v-model="edit.shift" class="form-control border-0"
+                            style="border-radius: 10px;">
+                            <option v-for="(shift, index) in allShifts" :value="shift.id" :key="index">
                                 {{ shift.name }}
                             </option>
                         </select>
@@ -264,12 +267,7 @@
                         </h6>
                     </div>
                     <div class="container d-flex flex-row justify-content-between align-items-center">
-                        <vs-button
-                            dark
-                            flat
-                            :loading="edit.loading"
-                            @click="updateProfile()"
-                        >
+                        <vs-button dark flat :loading="edit.loading" @click="updateProfile()">
                             <h6 class="m-0 fw-bold">
                                 Update
                             </h6>
@@ -288,12 +286,12 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
-    data(){
-        return{
-            pagination:{
+    data() {
+        return {
+            pagination: {
                 page: 1,
                 max: 15
             },
@@ -306,13 +304,13 @@ export default {
             tableKey: 0
         }
     },
-    computed:{
+    computed: {
         ...mapGetters(['allUsers', 'allShifts', 'csrfToken', 'sessions'])
     },
     mounted() {
         let globalThis = this;
 
-        this.$nextTick(function(){
+        this.$nextTick(function () {
             globalThis.users = globalThis.allUsers;
             setTimeout(() => {
                 globalThis.loading = false;
@@ -320,9 +318,9 @@ export default {
             }, 3000);
         });
     },
-    methods:{
-        formatDate(date){
-            if(date === null){
+    methods: {
+        formatDate(date) {
+            if (date === null) {
                 return ' ----- ';
             }
             return new Date(Date.parse(date)).toLocaleDateString('en-US', {
@@ -335,14 +333,14 @@ export default {
                 minute: 'numeric'
             });
         },
-        editRow(row){
+        editRow(row) {
             this.edit = {};
             let { shift } = row;
             delete row.shift;
-            this.edit = {loading: false, shift: shift.id, ...row};
+            this.edit = { loading: false, shift: shift.id, ...row };
             this.$bvModal.show('edit-user');
         },
-        updateProfile(){
+        updateProfile() {
             this.edit.loading = true;
             /**
              *

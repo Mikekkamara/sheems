@@ -103,8 +103,8 @@ class ShiftController extends Controller
     }
 
     public function generateReport(){
-        $report = Shift::with('sessions.attendances');
-        dd($report);
+        $report = Shift::with('sessions.attendances')->get();
+        return $report;
     }
 
 

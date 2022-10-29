@@ -20,6 +20,6 @@ class Session extends Model
         return $this->hasOne(Shift::class);
     }
     public function attendances(){
-        return $this->hasMany(Session::class)->with('user');
+        return $this->hasMany(Attendance::class)->with('user');
     }
 }
