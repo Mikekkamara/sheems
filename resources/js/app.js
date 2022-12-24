@@ -38,6 +38,7 @@ Vue.use(VueTimeago, {
 Vue.config.warnHandler = message => {
     // console.log(message);
 };
+Vue.config.productionTip = false;
 const store = new Vuex.Store(StoreData);
 /**
  * Mount components to the DOM
