@@ -4,7 +4,19 @@
             <vs-button danger transparent :active="$route.path.includes('home')">
                 <h6 class="m-0 fw-bold">
                     <i class="fa-duotone fa-home"></i>
-                    Home
+                    <span class="d-none d-sm-inline">
+                        Home
+                    </span>
+                </h6>
+            </vs-button>
+        </router-link>
+        <router-link :to="{ name: 'users' }" class="text-decoration-none">
+            <vs-button danger transparent :active="$route.path.includes('users')">
+                <h6 class="m-0 fw-bold">
+                    <i class="fa-duotone fa-users"></i>
+                    <span class="d-none d-sm-inline">
+                        Users
+                    </span>
                 </h6>
             </vs-button>
         </router-link>
@@ -12,7 +24,9 @@
             <vs-button danger transparent :active="$route.path.includes('reports')">
                 <h6 class="m-0 fw-bold">
                     <i class="fa-duotone fa-chart-network"></i>
-                    Reports
+                    <span class="d-none d-sm-inline">
+                        Reports
+                    </span>
                 </h6>
             </vs-button>
         </router-link>
@@ -22,7 +36,10 @@
         </form>
         <vs-button flat dark :active="true" @click="$refs['logout-form'].submit()">
             <h6 class="m-0 fw-bold">
-                Sign Out
+                <i class="fa-duotone fa-sign-out"></i>
+                <span class="d-none d-sm-inline">
+                    Sign Out
+                </span>
             </h6>
         </vs-button>
     </div>
@@ -30,16 +47,16 @@
 
 <script>
 export default {
-    computed:{
-        csrfToken(){
+    computed: {
+        csrfToken() {
             return window.Laravel.csrfToken;
         },
-        isLoggedIn(){
+        isLoggedIn() {
             let status = window.Laravel.status;
 
-            if(status === 0){
+            if (status === 0) {
                 return false;
-            }else{
+            } else {
                 return true;
             }
         }
