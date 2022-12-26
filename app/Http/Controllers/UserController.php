@@ -13,23 +13,34 @@ class UserController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
+     * [
+     * 'Shift Leader / keyboardists',
+     *  'Data analyst',0
+     *  'Keyboardist',1
+     *  'Shift Leader / Worshippers',
+     * 'Worshipper',2
+     *  'Violinist'3
+     * ]
      */
     public function index()
     {
-        $user = User::with('attendances', 'shift.sessions')->get();
-        return response($user, 200);
+        $users = User::with('attendances', 'shift.sessions')->get();
+        return response($users, 200);
     }
 
     public function violinists(){
-
+        $users = User::where('type', 3)->with('attendances', 'shift.sessionsViolinists')->get();
+        return response($users, 200);
     }
 
     public function keyboardists(){
-
+        $users = User::where('type', 1)->with('attendances', 'shift.sessionsKeyboardists')->get();
+        return response($users, 200);
     }
 
     public function worshipLeaders(){
-
+        $users = User::where('type', 2)->with('attendances', 'shift.sessionsWorshipLeaders')->get();
+        return response($users, 200);
     }
 
     /**

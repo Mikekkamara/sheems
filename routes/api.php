@@ -39,9 +39,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('shift')->group(function (){
         Route::get('/', [ShiftController::class, 'index']);
         Route::get('/sessions/{id}', [ShiftController::class, 'show']);
-        Route::get('/start/{id}', [ShiftController::class, 'start']);
-        Route::get('/end/{id}', [ShiftController::class, 'end']);
-        Route::get('/end-and-go-to-next/{id}/{next_id}', [ShiftController::class, 'goToNext']);
+        Route::get('/start/{id}/{type?}', [ShiftController::class, 'start']);
+        Route::get('/end/{id}/{type?}', [ShiftController::class, 'end']);
+        Route::get('/end-and-go-to-next/{id}/{next_id}/{type?}', [ShiftController::class, 'goToNext']);
     });
 
     Route::prefix('report')->group(function (){

@@ -16,8 +16,10 @@ class ShiftController extends Controller
      * All shifts
      */
     public function index(){
-        $shifts = Shift::with('session')->get();
-        return response($shifts, 200);
+        $keyboardists = Shift::with('sessionKeyboardists')->first();
+        $violinists = Shift::with('sessionViolinists')->first();
+        $worshipLeaders = Shift::with('sessionWorshipLeaders')->first();
+        return response(collect([$keyboardists, $violinists, $worshipLeaders]), 200);
     }
 
     /**
@@ -32,31 +34,53 @@ class ShiftController extends Controller
      * Return all shift's sessions
      */
     public function show($id){
-        $shifts = Shift::with('sessions', 'users.attendances')->find($id);
 
+        $shifts = Shift::with('sessions', 'users.attendances')->find($id);
         return response($shifts, 200);
     }
     /**
      * Start a shift
+     * [
+     * 'Shift Leader / keyboardists',
+     *  'Data analyst',0
+     *  'Keyboardist',1
+     *  'Shift Leader / Worshippers',
+     * 'Worshipper',2
+     *  'Violinist'3
+     * ]
      */
-    public function start($id){
+    public function start($id, $type = 1){
 
         $shift = Shift::find($id);
 
         $session = Session::create([
             'shift_id' => $id,
             'name' => $shift->name . ' - ' . Str::random(3),
-            'start' => Carbon::now()
+            'start' => Carbon::now(),
+            'type' => $type
         ]);
+
+        $sessionType = 'ongoing_session_keyboardists';
+
+        switch ($type) {
+            case 2:
+                $sessionType = 'ongoing_session_worship_leaders';
+                break;
+            case 3:
+                $sessionType = 'ongoing_session_violinists';
+                break;
+            default:
+                break;
+        }
 
         $shift->update([
             'ongoing' => true,
-            'ongoing_session' => $session->id
+            $sessionType => $session->id
         ]);
 
         //Create Attendances
 
-        $users = User::where('shift_id', $shift->id)->get();
+        $users = User::where('shift_id', $shift->id)->where('type', $type)->get();
 
         collect($users)->each(function ($user) use($session){
             $this->createAttendances($user->id, $session->id);
@@ -64,6 +88,7 @@ class ShiftController extends Controller
 
         return response($session, 200);
     }
+
     public function createAttendances($user_id, $session_id){
         return Attendance::create([
             'user_id' => $user_id,
@@ -74,11 +99,24 @@ class ShiftController extends Controller
     /**
      * End shift
      */
-    public function end($id){
+    public function end($id, $type = 1){
         $shift = Shift::find($id);
 
+        $sessionType = 'ongoing_session_keyboardists';
+
+        switch ($type) {
+            case 2:
+                $sessionType = 'ongoing_session_worship_leaders';
+                break;
+            case 3:
+                $sessionType = 'ongoing_session_violinists';
+                break;
+            default:
+                break;
+        }
+
         //End session
-        $endingSession = Session::find($shift->ongoing_session);
+        $endingSession = Session::find($shift->$sessionType);
 
         $endingSession->update([
             'end' => Carbon::now()
@@ -86,7 +124,7 @@ class ShiftController extends Controller
 
         $shift->update([
             'ongoing' => false,
-            'ongoing_session' => null
+            $sessionType => null
         ]);
 
         return response($shift, 200);
@@ -94,12 +132,12 @@ class ShiftController extends Controller
     /**
      * End and Begin next shift
      */
-    public function goToNext($id, $next){
+    public function goToNext($id, $next, $type){
         //End shift
-        $this->end($id);
+        $this->end($id, $type);
 
         //Start next shift
-        return $this->start($next);
+        return $this->start($next, $type);
     }
 
     public function generateReport(){
