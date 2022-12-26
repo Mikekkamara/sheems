@@ -26,6 +26,9 @@ Route::middleware('auth:sanctum')->group(function () {
     //Users
     Route::prefix('user')->group(function (){
         Route::get('/', [UserController::class, 'index']);
+        Route::get('/violinists', [UserController::class, 'violinists']);
+        Route::get('/keyboardists', [UserController::class, 'keyboardists']);
+        Route::get('/worship-leaders', [UserController::class, 'worshipLeaders']);
         Route::post('/update/{id}', [UserController::class, 'update']);
         Route::post('/create', [UserController::class, 'store']);
         Route::get('/check-in/{id}', [AttendanceController::class, 'checkIn']);
@@ -46,5 +49,3 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 });
-
-

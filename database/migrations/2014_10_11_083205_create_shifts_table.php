@@ -17,7 +17,9 @@ class CreateShiftsTable extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->boolean('ongoing')->default(false);
-            $table->string('ongoing_session')->nullable();
+            $table->string('ongoing_session_keyboardists')->nullable();
+            $table->string('ongoing_session_violinists')->nullable();
+            $table->string('ongoing_session_worship_leaders')->nullable();
             $table->timestamps();
         });
     }

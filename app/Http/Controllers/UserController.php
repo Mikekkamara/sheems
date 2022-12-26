@@ -20,6 +20,18 @@ class UserController extends Controller
         return response($user, 200);
     }
 
+    public function violinists(){
+
+    }
+
+    public function keyboardists(){
+
+    }
+
+    public function worshipLeaders(){
+
+    }
+
     /**
      * Show the form for creating a new resource.
      *

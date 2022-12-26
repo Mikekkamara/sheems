@@ -20,11 +20,11 @@ export default new VueRouter({
             props: true,
             component: () => import(/* webpackChunkName: 'Home' */ './components/users/Index'),
             children: [
-                {
-                    path: 'all',
-                    name: 'homeAll',
-                    component: () => import(/* webpackChunkName: 'The Table Home' */ './components/users/TheTable')
-                },
+                // {
+                //     path: 'users',
+                //     name: 'users',
+                //     component: () => import(/* webpackChunkName: 'UsersShow' */ './components/users/show')
+                // },
                 {
                     path: 'clock',
                     name: 'clock',
@@ -40,6 +40,11 @@ export default new VueRouter({
                     ]
                 }
             ]
+        },
+        {
+            path: '/users',
+            name: 'users',
+            component: () => import(/* webpackChunkName: 'UsersShow' */ './components/users/show')
         },
         {
             path: '/reports',
