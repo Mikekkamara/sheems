@@ -27,7 +27,7 @@ class InitAppSeeder extends Seeder
 
         User::create([
             'name' => 'Michael Kamara',
-            'email' => 'mikekkkamara@gmail.com',
+            'email' => 'mikekkamara@gmail.com',
             'type' => 2,
             'user_number' => Str::random(2),
             'phone_number' => '+254704120644',

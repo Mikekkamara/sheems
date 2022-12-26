@@ -18,6 +18,7 @@ class CreateSessionsTable extends Migration
             $table->foreignUuid('shift_id')->references('id')->on('shifts')->onDelete('cascade');
             $table->string('name');
             $table->string('start');
+            $table->smallInteger('type');
             $table->string('end')->nullable();
             $table->timestamps();
         });

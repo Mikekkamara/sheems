@@ -21,7 +21,7 @@ class UserFactory extends Factory
             'user_number' => Str::random(2),
             'phone_number' => $this->faker->phoneNumber(),
             'from' => $this->faker->city(),
-            'shift_id' => $this->faker->randomElement(['bbc016fc-9b41-4ceb-a5cd-b1242f4b67df', 'e5c8e25b-070a-4987-a749-891ed52bf87c']),
+            'shift_id' => $this->faker->randomElement(['866af64e-4559-4bf0-851c-4a7be2838982', 'fbf64b0c-12e8-4e1f-ad92-6556f55119b4']),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
         ];
     }

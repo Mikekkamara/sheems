@@ -2,6 +2,12 @@ import axios from "axios"
 
 export default{
     state: {
+        types: [
+            'Data Analyst',
+            'Keyboardist',
+            'Worship Leader',
+            'Violinist'
+        ],
         /**
          * Users
          */
@@ -20,6 +26,9 @@ export default{
     getters: {
         csrfToken(){
             return window.Laravel.csrfToken;
+        },
+        userTypes(state) {
+            return state.types;
         },
         /**
          * Users
@@ -73,11 +82,18 @@ export default{
          * Users
          */
         //Get users from api
-        async getUsers(context){
+        async getUsers(context, payload = undefined) {
+            if (payload) {
+
+                return await axios.get(`/api/v1/user/${payload}`).then(response => {
+                    context.commit('setUsers', response.data);
+                });
+            }
             return await axios.get('/api/v1/user').then(response => {
                 context.commit('setUsers', response.data);
-            })
+            });
         },
+
 
         //Create a new user
         async createUser(context, payload){

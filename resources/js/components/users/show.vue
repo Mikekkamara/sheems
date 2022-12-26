@@ -6,7 +6,8 @@
         </h4>
         <!-- Nav -->
         <div class="d-flex flex-row gap-2 mt-5">
-            <vs-button style="max-width:fit-content" dark flat :active="Object.keys($route.query).length === 0">
+            <vs-button style="max-width:fit-content" @click="$router.push({ query: {} })" dark flat
+                :active="Object.keys($route.query).length === 0">
                 <h6 class="fw-bold m-0">
                     <i class="fa-duotone fa-timer"></i>
                     <span class="p-1">
@@ -14,27 +15,30 @@
                     </span>
                 </h6>
             </vs-button>
-            <vs-button style="max-width:fit-content" dark flat>
+            <vs-button style="max-width:fit-content" @click="$router.push({ query: { type: 'keyboardists' } })"
+                :active="$route.query.type === 'keyboardists'" dark flat>
                 <h6 class="fw-bold m-0">
                     <i class="fa-duotone fa-piano-keyboard"></i>
-                    <span class="p-1">
+                    <span class="p-1 d-none d-md-inline">
                         Keyboardists
                     </span>
                 </h6>
             </vs-button>
-            <vs-button style="max-width:fit-content" dark flat>
+            <vs-button style="max-width:fit-content" @click="$router.push({ query: { type: 'violinists' } })"
+                :active="$route.query.type === 'violinists'" dark flat>
                 <h6 class="fw-bold m-0">
                     <i class="fa-duotone fa-violin"></i>
-                    <span class="p-1">
+                    <span class="p-1 d-none d-md-inline">
                         Violinists
                     </span>
                 </h6>
             </vs-button>
-            <vs-button style="max-width:fit-content" dark flat>
+            <vs-button style="max-width:fit-content" @click="$router.push({ query: { type: 'worship-leaders' } })"
+                :active="$route.query.type === 'worship-leaders'" dark flat>
                 <h6 class="fw-bold m-0">
                     <i class="fa-duotone fa-microphone-stand"></i>
-                    <span class="p-1">
-                        Keyboardists
+                    <span class="p-1 d-none d-md-inline">
+                        Worship Leaders
                     </span>
                 </h6>
             </vs-button>
@@ -53,44 +57,47 @@
                 </template>
             </vs-input>
         </div>
-        <transition-group tag="ul" class="match-cards">
-            <li v-for="i in 50" :key="`${i}-vscards`">
-                <vs-card>
-                    <template #title>
-                        <div>
-                            <span class="badge bg-warning">
-                                Pastor
-                            </span>
-                            <span> &bull; </span>
-                            <span class="badge bg-secondary">
-                                <i class="fa-duotone fa-piano-keyboard"></i>
-                                Keyboardist
-                            </span>
-                            <h3 class="fw-bold mt-3">
-                                Jane Doe
-                            </h3>
-                        </div>
-                    </template>
-                    <template #img>
-                        <b-img src="../../../../storage/assets/woman-g5474d9095_1920.jpg" alt=""></b-img>
-                    </template>
-                    <template #text>
-                        <p>
-                            <span>Muranga</span>
-                            <span> &bull;</span>
-                            <span>0701234567</span>
-                            <span> &bull;</span>
-                            <span>Shift B</span>
-                        </p>
-                    </template>
-                    <template #interactions>
-                        <vs-button danger icon @click="editDetails">
-                            <i class='fa-duotone fa-pen h5 m-0'></i>
-                        </vs-button>
+        <div v-if="loading" class="d-flex flex-row justify-content-center align-items-center p-2 m-2">
+            <div class="spinner-border spinner-border-sm" role="status" style="height: 30px; width: 30px;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <transition-group v-else tag="div" class="match-cards">
+            <vs-card v-for="user in allUsers" :key="user.id">
+                <template #title>
+                    <div>
+                        <span class="badge bg-warning">
+                            {{ user.title }}
+                        </span>
+                        <span> &bull; </span>
+                        <span class="badge bg-secondary">
+                            <i class="fa-duotone fa-piano-keyboard"></i>
+                            {{ userTypes[user.type] }}
+                        </span>
+                        <h3 class="fw-bold mt-3">
+                            {{ user.name }}
+                        </h3>
+                    </div>
+                </template>
+                <template #img>
+                    <b-img src="../../../../storage/assets/woman-g5474d9095_1920.jpg" alt=""></b-img>
+                </template>
+                <template #text>
+                    <p>
+                        <span>{{ user.from }}</span>
+                        <span> &bull;</span>
+                        <span>{{ user.phone_number }}</span>
+                        <span> &bull;</span>
+                        <span>{{ allShifts['keyboardists'].find(shift => shift.id === user.shift_id).name }}</span>
+                    </p>
+                </template>
+                <template #interactions>
+                    <vs-button danger icon @click="editDetails">
+                        <i class='fa-duotone fa-pen h5 m-0'></i>
+                    </vs-button>
 
-                    </template>
-                </vs-card>
-            </li>
+                </template>
+            </vs-card>
         </transition-group>
 
         <!-- Update Details or create user modal -->
@@ -314,11 +321,52 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
+    data() {
+        return {
+            loading: true
+        }
+    },
     methods: {
         editDetails() {
             this.$bvModal.show('user-modal');
+        },
+        async testApi() {
+            await axios.get('/api/v1/user/keyboardists').then(response => {
+                console.log(response.data)
+            }).catch(error => {
+                console.log('error', error)
+            });
         }
+    },
+    computed: {
+        ...mapGetters(['allUsers', 'allShifts', 'userTypes'])
+    },
+    async mounted() {
+        await this.$store.dispatch('getShifts');
+
+        let query = this.$route.query.type;
+
+        if (query) {
+            await this.$store.dispatch('getUsers', query);
+        } else {
+            await this.$store.dispatch('getUsers');
+        }
+
+        this.loading = false;
+    },
+    async beforeRouteUpdate(to, from, next) {
+        this.loading = true;
+        let query = to.query.type;
+
+        if (query) {
+            await this.$store.dispatch('getUsers', query);
+        } else {
+            await this.$store.dispatch('getUsers');
+        }
+        next();
+        this.loading = false;
     }
 }
 </script>

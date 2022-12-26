@@ -24,22 +24,22 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::with('attendances', 'shift.sessions')->get();
+        $users = User::with('attendances')->get();
         return response($users, 200);
     }
 
     public function violinists(){
-        $users = User::where('type', 3)->with('attendances', 'shift.sessionsViolinists')->get();
+        $users = User::with('attendances')->where('type', 3)->get();
         return response($users, 200);
     }
 
     public function keyboardists(){
-        $users = User::where('type', 1)->with('attendances', 'shift.sessionsKeyboardists')->get();
+        $users = User::with('attendances')->where('type', 1)->get();
         return response($users, 200);
     }
 
     public function worshipLeaders(){
-        $users = User::where('type', 2)->with('attendances', 'shift.sessionsWorshipLeaders')->get();
+        $users = User::with('attendances')->where('type', 2)->get();
         return response($users, 200);
     }
 
