@@ -13,6 +13,9 @@ export default{
          */
         users: [],
         usersSearch: [],
+        lastClocked: {
+
+        },
 
         /**
          * Shifts
@@ -27,6 +30,9 @@ export default{
     getters: {
         csrfToken(){
             return window.Laravel.csrfToken;
+        },
+        latest(state) {
+            return state.lastClocked;
         },
         userTypes(state) {
             return state.types;
@@ -78,7 +84,14 @@ export default{
         resetSearch(state) {
             state.users = state.usersSearch;
         },
-
+        setLatest(state, payload) {
+            state.lastClocked = state.users.find(user => user.id === payload);
+        },
+        filterCheckedIn(state) {
+            state.users = state.users.filter(user => {
+                return user.attendances.find(attendance => attendance.start !== null && attendance.end == null);
+            });
+        },
         /**
          * Shifts
          */
@@ -124,17 +137,19 @@ export default{
                 return response;
             })
         },
-        checkIn(context, payload){
-            return axios.get(`/api/v1/user/check-in/${payload}`).then(res => {
-                context.dispatch('getUsers');
-                context.dispatch('getShifts');
+        async checkIn(context, payload){
+            return await axios.get(`/api/v1/user/check-in/${payload}`).then(async res => {
+                await context.dispatch('getUsers');
+                await context.dispatch('getShifts');
+                context.commit('setLatest', payload);
                 return res;
             });
         },
-        checkOut(context, payload){
-            return axios.get(`/api/v1/user/check-out/${payload}`).then(res => {
-                context.dispatch('getUsers');
-                context.dispatch('getShifts');
+        async checkOut(context, payload){
+            return await axios.get(`/api/v1/user/check-out/${payload}`).then(async res => {
+                await context.dispatch('getUsers');
+                await context.dispatch('getShifts');
+                context.commit('setLatest', payload);
                 return res;
             });
         },

@@ -25,19 +25,19 @@ class Shift extends Model
     }
 
     public function sessionsViolinists(){
-        return $this->hasMany(Session::class)->where('type', 3);
+        return $this->hasMany(Session::class)->where('type', 3)->oldest();
     }
 
     public function sessionsKeyboardists(){
-        return $this->hasMany(Session::class)->where('type', 1);
+        return $this->hasMany(Session::class)->where('type', 1)->oldest();
     }
 
     public function sessionsWorshipLeaders(){
-        return $this->hasMany(Session::class)->where('type', 2);
+        return $this->hasMany(Session::class)->where('type', 2)->oldest();
     }
 
     public function sessions(){
-        return $this->hasMany(Session::class);
+        return $this->hasMany(Session::class)->oldest();
     }
 
     public function users(){

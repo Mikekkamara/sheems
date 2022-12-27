@@ -6,34 +6,28 @@
         </h4>
         <!-- Nav -->
         <div class="d-flex flex-row gap-2 mt-5">
-            <vs-button style="max-width:fit-content" @click="$router.push({ query: {} })" dark flat
+            <vs-button style="max-width: fit-content" @click="$router.push({ query: {} })" dark flat
                 :active="Object.keys($route.query).length === 0">
                 <h6 class="fw-bold m-0">
                     <i class="fa-duotone fa-timer"></i>
-                    <span class="p-1">
-                        All
-                    </span>
+                    <span class="p-1"> All </span>
                 </h6>
             </vs-button>
-            <vs-button style="max-width:fit-content" @click="$router.push({ query: { type: 'keyboardists' } })"
+            <vs-button style="max-width: fit-content" @click="$router.push({ query: { type: 'keyboardists' } })"
                 :active="$route.query.type === 'keyboardists'" dark flat>
                 <h6 class="fw-bold m-0">
                     <i class="fa-duotone fa-piano-keyboard"></i>
-                    <span class="p-1 d-none d-md-inline">
-                        Keyboardists
-                    </span>
+                    <span class="p-1 d-none d-md-inline"> Keyboardists </span>
                 </h6>
             </vs-button>
-            <vs-button style="max-width:fit-content" @click="$router.push({ query: { type: 'violinists' } })"
+            <vs-button style="max-width: fit-content" @click="$router.push({ query: { type: 'violinists' } })"
                 :active="$route.query.type === 'violinists'" dark flat>
                 <h6 class="fw-bold m-0">
                     <i class="fa-duotone fa-violin"></i>
-                    <span class="p-1 d-none d-md-inline">
-                        Violinists
-                    </span>
+                    <span class="p-1 d-none d-md-inline"> Violinists </span>
                 </h6>
             </vs-button>
-            <vs-button style="max-width:fit-content" @click="$router.push({ query: { type: 'worship-leaders' } })"
+            <vs-button style="max-width: fit-content" @click="$router.push({ query: { type: 'worship-leaders' } })"
                 :active="$route.query.type === 'worship-leaders'" dark flat>
                 <h6 class="fw-bold m-0">
                     <i class="fa-duotone fa-microphone-stand"></i>
@@ -49,17 +43,16 @@
             <search></search>
         </div>
         <div v-if="loading" class="d-flex flex-row justify-content-center align-items-center p-2 m-2">
-            <div class="spinner-border spinner-border-sm" role="status" style="height: 30px; width: 30px;">
+            <div class="spinner-border spinner-border-sm" role="status" style="height: 30px; width: 30px">
                 <span class="visually-hidden">Loading...</span>
             </div>
         </div>
         <transition-group v-else tag="ul" name="list" class="match-cards list-unstyled">
             <li v-for="user in allUsers" :key="user.id">
-
                 <vs-card>
                     <template #title>
                         <div class="d-flex flex-row align-items-center gap-1">
-                            <span class="badge bg-secondary p-1" style="font-size:smaller">
+                            <span class="badge bg-secondary p-1" style="font-size: smaller">
                                 <!-- {{ user.title }} -->
                                 Pastor
                             </span>
@@ -76,6 +69,8 @@
                     </template>
                     <template #img>
                         <b-img src="../../../../storage/assets/woman-g5474d9095_1920.jpg" alt=""></b-img>
+                        <!-- <b-img :src="`../../../../storage/profile/${user.profile}`"
+                            :alt="`${user.profile} profile picture`"></b-img> -->
                     </template>
                     <template #text>
                         <p>
@@ -83,58 +78,146 @@
                             <span> &bull;</span>
                             <span>{{ user.phone_number }}</span>
                             <span> &bull;</span>
-                            <span>{{ allShifts['keyboardists'].find(shift => shift.id === user.shift_id).name }}</span>
+                            <span>{{
+        allShifts["keyboardists"].find(
+            (shift) => shift.id === user.shift_id
+        ).name
+}}</span>
                         </p>
-                        <div class="mt-3"
-                            v-if="ongoingShifts.keyboardists || ongoingShifts.worship_leaders || ongoingShifts.violinists">
-                            <vs-button dark icon v-if="showAction(user, false)">
+                        <div class="mt-3" v-if="
+    ongoingShifts.keyboardists ||
+    ongoingShifts.worship_leaders ||
+    ongoingShifts.violinists
+">
+                            <vs-button dark icon v-if="showAction(user, false)" @click="checkOutUser(user.id)">
                                 <h5 class="m-0 d-flex flex-row justify-content-center gap-2">
                                     <i class="fa-duotone fa-lightbulb-cfl text-warning fa-shake"></i>
-                                    <span class="h6 m-0">
-                                        Clock Out
-                                    </span>
+                                    <span class="h6 m-0"> Check Out </span>
                                 </h5>
                             </vs-button>
-                            <vs-button dark icon v-if="showAction(user)">
+                            <vs-button dark icon v-if="showAction(user)" @click="checkInUser(user.id)">
                                 <h5 class="m-0 d-flex flex-row justify-content-center gap-2">
                                     <i class="fa-duotone fa-lightbulb-cfl-on text-warning fa-fade"></i>
-                                    <span class="h6 m-0">
-                                        Clock In
-                                    </span>
+                                    <span class="h6 m-0"> Check In </span>
                                 </h5>
                             </vs-button>
                         </div>
                     </template>
                     <template #interactions>
                         <vs-button danger icon @click="editDetails">
-                            <i class='fa-duotone fa-pen h5 m-0'></i>
+                            <i class="fa-duotone fa-pen h5 m-0"></i>
                         </vs-button>
-                        <vs-button danger icon @click="editDetails">
-                            <i class='fa-duotone fa-eye h5 m-0'></i>
+                        <vs-button danger icon @click="showAttendanceUser(user.id)">
+                            <i class="fa-duotone fa-eye h5 m-0"></i>
                         </vs-button>
                     </template>
                 </vs-card>
             </li>
         </transition-group>
 
+        <!-- Show attendance modal -->
+        <b-modal v-if="showAttendance" id="attendance-modal" size="lg" scrollable centered hide-footer hide-header
+            content-class="template-modal" header-class="template-modal-header">
+            <div class="d-flex flex-row justify-content-end" style="position: sticky; top: 0; z-index: 20">
+                <vs-button danger icon circle @click="hideAttendances()">
+                    <i class="fa-duotone fa-times-circle h5 m-0"></i>
+                </vs-button>
+            </div>
+            <div>
+                <!-- <h3 class="font-monospace">{{ attendanceUser.name }}'s Attendance History</h3> -->
+                <div>
+                    <b-avatar size="100" src="../../../../storage/assets/woman-g5474d9095_1920.jpg" alt=""></b-avatar>
+                    <p class="mt-2 mb-0 d-flex flex-row gap-1 align-items-center">
+                        <span class="badge bg-secondary p-1" style="font-size: smaller">
+                            <!-- {{ user.title }} -->
+                            Pastor
+                        </span>
+                        <span> &bull; </span>
+                        <i class="fa-duotone fa-microphone-stand h5 m-0"></i>
+                        <span> &bull; </span>
+                        <i class="fa-duotone fa-piano-keyboard h5 m-0"></i>
+                        <span> &bull; </span>
+                        <i class="fa-duotone fa-violin h5 m-0"></i>
+                    </p>
+                    <span class="h3 m-0 mt-2 fw-bold d-block">
+                        {{ attendanceUser.name }}
+                    </span>
+                    <p>
+                        <span>{{ attendanceUser.from }}</span>
+                        <span> &bull;</span>
+                        <span>{{ attendanceUser.phone_number }}</span>
+                    </p>
+                    <hr>
+                    <p class="h5 fw-bold text-muted">
+                        <i class="fa-duotone fa-clock-rotate-left"></i>
+                        Attendance History
+                    </p>
+                </div>
+                <div class="rounded-3 bg-light p-2 my-2" v-for="session in attendanceUser.sessions" :key="session.id">
+                    <span>
+                        {{ formatTime(session.created_at) }}
+                    </span>
+                    <p class="d-flex flex-row align-items-center gap-1">
+                        <span class="fs-4 m-0 fw-bold">
+                            {{ session.name }}
+                        </span>
+                        <span>
+                            &bull;
+                        </span>
+                        <span v-if="session.end !== null && session.start !== null" class="badge h6 m-0 p-1 bg-success">
+                            Completed
+                        </span>
+                        <span v-else class="badge h6 m-0 p-1 bg-danger">
+                            pending
+                        </span>
+                    </p>
+                    <div>
+                        <span class="d-block">
+                            <i class="fa-duotone fa-circle-play"></i>
+                            <span>
+                                Checked In:
+                            </span>
+                            <span :class="[session.attendance.start === null ? 'text-danger' : '']">
+                                {{ session.attendance.start === null ? 'Did not checkin' :
+        formatAttendance(session.attendance.start)
+}}
+                                <span v-if="session.attendance.start !== null" class="text-danger">
+                                    {{ formatLateness(calculateLateness(session.created_at, session.attendance.start))
+}}
+                                </span>
+                            </span>
+                        </span>
+                        <span class="d-block">
+                            <i class="fa-duotone fa-circle-stop"></i>
+                            <span>
+                                Checked Out:
+                            </span>
+                            <span :class="[session.attendance.end === null ? 'text-danger' : '']">
+                                {{ session.attendance.end === null ? 'Did not checkout' :
+        formatAttendance(session.attendance.end)
+
+}}
+
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </b-modal>
         <!-- Update Details or create user modal -->
         <b-modal id="user-modal" size="lg" scrollable centered hide-footer hide-header content-class="template-modal"
             header-class="template-modal-header">
-            <div class="d-flex flex-row justify-content-end" style="position: sticky; top: 0;z-index: 20;">
+            <div class="d-flex flex-row justify-content-end" style="position: sticky; top: 0; z-index: 20">
                 <vs-button danger icon circle @click="$bvModal.hide('user-modal')">
-                    <i class='fa-duotone fa-times-circle h5 m-0'></i>
+                    <i class="fa-duotone fa-times-circle h5 m-0"></i>
                 </vs-button>
             </div>
             <div class="mt-4">
-                <h3 class="font-monospace">
-                    Update Details
-                </h3>
+                <h3 class="font-monospace">Update Details</h3>
 
                 <form action="" class="mt-4 d-flex flex-column gap-3">
                     <div>
-                        <h5 class="fw-bold">
-                            Profile Picture
-                        </h5>
+                        <h5 class="fw-bold">Profile Picture</h5>
                         <div class="mt-2">
                             <b-avatar size="100" src="../../../../storage/assets/woman-g5474d9095_1920.jpg"
                                 alt=""></b-avatar>
@@ -146,22 +229,27 @@
                                 <i class="fa-duotone fa-user-group-crown"></i>
                                 <span class="m-2">Title</span>
                             </h5>
-                            <select name="title" id="title" class="form-control border-0" style="border-radius: 10px;">
+                            <select name="title" id="title" class="form-control border-0" style="border-radius: 10px">
                                 <option value="0" selected>None</option>
                                 <option value="1">Pastor</option>
                                 <option value="2">Overseer</option>
                                 <option value="3">Bishop</option>
                             </select>
                         </div>
-                        <div class="flex-grow-1 ">
+                        <div class="flex-grow-1">
                             <h5 class="fw-bold d-flex flex-row align-items-center">
                                 <i class="fa-duotone fa-phone"></i>
                                 <span class="m-2">Type</span>
                             </h5>
-                            <select name="type" id="type" class="form-control border-0" style="border-radius: 10px;">
-                                <option
-                                    v-for="(item, i) in ['Shift Leader / keyboardists', 'Data analyst', 'Keyboardist', 'Shift Leader / Worshippers', 'Worshipper', 'Violinist']"
-                                    :key="i" :value="i">
+                            <select name="type" id="type" class="form-control border-0" style="border-radius: 10px">
+                                <option v-for="(item, i) in [
+    'Shift Leader / keyboardists',
+    'Data analyst',
+    'Keyboardist',
+    'Shift Leader / Worshippers',
+    'Worshipper',
+    'Violinist',
+]" :key="i" :value="i">
                                     {{ item }}
                                 </option>
                             </select>
@@ -177,7 +265,7 @@
                         </div>
                         <div class="flex-grow-1">
                             <h5 class="fw-bold d-flex flex-row align-items-center">
-                                <i class="fa-duotone fa-at "></i>
+                                <i class="fa-duotone fa-at"></i>
                                 <span class="m-2">Email</span>
                             </h5>
                             <vs-input type="email" name="email"></vs-input>
@@ -200,12 +288,12 @@
                         </div>
                     </div>
                     <div class="d-flex flex-wrap flex-row items-center gap-3">
-                        <div class="flex-grow-1" style="max-width: 50%;">
+                        <div class="flex-grow-1" style="max-width: 50%">
                             <h5 class="fw-bold d-flex flex-row align-items-center">
                                 <i class="fa-duotone fa-timer"></i>
                                 <span class="m-2">Shift</span>
                             </h5>
-                            <select type="text" name="shift" class="form-control border-0" style="border-radius: 10px;">
+                            <select type="text" name="shift" class="form-control border-0" style="border-radius: 10px">
                                 <!-- <option v-for="(shift, index) in allShifts" :selected="index === 0" :key="index">
                                     {{ shift.name }}
                                 </option> -->
@@ -213,11 +301,9 @@
                         </div>
                     </div>
                     <div class="d-flex flex-wrap flex-row items-center gap-3 mt-5">
-                        <vs-button dark block style="max-width: 50%;" class="mx-auto">
+                        <vs-button dark block style="max-width: 50%" class="mx-auto">
                             <h5 class="m-0 fw-bold">
-                                <span>
-                                    Create
-                                </span>
+                                <span> Create </span>
                                 <i class="fa-duotone fa-arrow-right"></i>
                             </h5>
                         </vs-button>
@@ -338,32 +424,70 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import Search from './Search.vue';
-import gsap from 'gsap';
+import { mapGetters } from "vuex";
+import Search from "./Search.vue";
+const SuccessClock = () =>
+    import(/* webpackChunkName: 'Success Banner' */ "./SuccessClock.vue");
+const ErrorClock = () =>
+    import(/* webpackChunkName: 'Error Banner' */ "./ErrorClock.vue");
 export default {
     components: { Search },
     data() {
         return {
             loading: true,
-            search: '',
-            data: []
-        }
+            search: "",
+            data: [],
+            attendance: '',
+            showAttendance: false
+        };
     },
     methods: {
         editDetails() {
-            this.$bvModal.show('user-modal');
+            this.$bvModal.show("user-modal");
         },
-        async testApi() {
-            await axios.get('/api/v1/user/keyboardists').then(response => {
-                console.log(response.data)
-            }).catch(error => {
-                console.log('error', error)
-            });
+        showAttendanceUser(userId) {
+            this.attendance = userId;
+            this.showAttendance = true;
+            this.$bvModal.show('attendance-modal');
         },
+        hideAttendances() {
+            this.$bvModal.hide('attendance-modal');
+            this.attendance = '';
+            this.showAttendance = false;
+        },
+        formatTime(date) {
+            return new Date(Date.parse(date)).toLocaleString('en-GB', {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: 'numeric',
+                minute: 'numeric'
+            })
+        },
+        formatAttendance(date) {
+            return new Date(Date.parse(date)).toLocaleString('en-GB', {
+                hour: 'numeric',
+                minute: 'numeric'
+            })
+        },
+        calculateLateness(sessionStart, date) {
+            let start = Date.parse(sessionStart);
+            let checkIn = Date.parse(date);
 
+            //30 min
+            return checkIn - start;
+        },
+        formatLateness(late) {
+            if (late > 1800000) {
+                let diff = late / 3600000;
+                if (diff > 1) {
+                    return `${Math.floor(diff)} hr(s) late`
+                }
+                return `${diff * 10} mins late`
+            }
+        },
         showAction(user, clockIn = true) {
-
             if (!this.ongoingIndex.includes(user.type)) {
                 return false;
             }
@@ -383,41 +507,97 @@ export default {
                 if (user.shift_id !== this.ongoingShifts.worship_leaders.id) {
                     return false;
                 }
-
             }
 
             if (clockIn) {
                 switch (user.type) {
                     case 1:
-                        return !this.tobeClockedOutKeyboardists.includes(user.id);
+                        return !this.tobeCheckedOutKeyboardists.includes(
+                            user.id
+                        );
                     case 2:
-                        return !this.tobeClockedOutWorshipLeaders.includes(user.id);
+                        return !this.tobeCheckedOutWorshipLeaders.includes(
+                            user.id
+                        );
                     case 3:
-                        return !this.tobeClockedOutViolinists.includes(user.id);
+                        return !this.tobeCheckedOutViolinists.includes(user.id);
                     default:
                         break;
                 }
             } else {
                 switch (user.type) {
                     case 1:
-                        return this.tobeClockedOutKeyboardists.includes(user.id);
+                        return this.tobeCheckedOutKeyboardists.includes(
+                            user.id
+                        );
                     case 2:
-                        return this.tobeClockedOutWorshipLeaders.includes(user.id);
+                        return this.tobeCheckedOutWorshipLeaders.includes(
+                            user.id
+                        );
                     case 3:
-                        return this.tobeClockedOutViolinists.includes(user.id);
+                        return this.tobeCheckedOutViolinists.includes(user.id);
                     default:
                         break;
                 }
             }
-
         },
-        clockInUser() {
-
-        }
+        async checkInUser(userId) {
+            await this.$store
+                .dispatch("checkIn", userId)
+                .then((checkInResponse) => {
+                    this.$vs.notification({
+                        content: SuccessClock,
+                        duration: 6000,
+                    });
+                })
+                .catch((checkInError) => {
+                    this.$vs.notification({
+                        content: ErrorClock,
+                        duration: 6000,
+                    });
+                });
+        },
+        async checkOutUser(userId) {
+            await this.$store
+                .dispatch("checkOut", userId)
+                .then((checkOutResponse) => {
+                    this.$vs.notification({
+                        content: SuccessClock,
+                        duration: 6000,
+                    });
+                })
+                .catch((checkOutError) => {
+                    this.$vs.notification({
+                        content: ErrorClock,
+                        duration: 6000,
+                    });
+                });
+            // const invites = this.$vs.notification({
+            //     content: ErrorClock,
+            //     duration: 'none'
+            // });
+        },
     },
     computed: {
-        ...mapGetters(['allUsers', 'allShifts', 'userTypes', 'ongoingShifts']),
+        ...mapGetters([
+            "allUsers",
+            "allShifts",
+            "userTypes",
+            "ongoingShifts",
+            "latest",
+        ]),
+        attendanceUser() {
+            if (this.attendance !== '') {
+                let user = this.allUsers.find(user => user.id === this.attendance);
 
+                user.shift = this.allShifts[[, 'keyboardists', 'worship_leaders', 'violinists'][user.type]].find(shift => shift.id === user.shift_id);
+                user.sessions = user.shift[[, 'sessions_keyboardists', 'sessions_violinists', 'sessions_worship_leaders'][user.type]].filter(session => {
+                    return session.attendance = user.attendances.find(attendance => attendance.session_id === session.id);
+                });
+
+                return user;
+            }
+        },
         ongoingIndex() {
             let index = [];
 
@@ -430,20 +610,29 @@ export default {
             }
             return index;
         },
-        tobeClockedOutKeyboardists() {
+        tobeCheckedOutKeyboardists() {
             let clockedIn = [];
-            this.allUsers.forEach(user => {
+            this.allUsers.forEach((user) => {
                 if (this.ongoingShifts.keyboardists) {
-
-                    if (user.type !== 1 || user.shift_id !== this.ongoingShifts.keyboardists.id) {
+                    if (
+                        user.type !== 1 ||
+                        user.shift_id !== this.ongoingShifts.keyboardists.id
+                    ) {
                         return;
                     }
 
-                    let attendance = user.attendances.find(attendance => attendance.session_id === this.ongoingShifts.keyboardists.ongoing_session_keyboardists);
-
+                    let attendance = user.attendances.find(
+                        (attendance) =>
+                            attendance.session_id ===
+                            this.ongoingShifts.keyboardists
+                                .ongoing_session_keyboardists
+                    );
 
                     if (attendance !== undefined) {
-                        if (attendance.start !== null && attendance.end == null) {
+                        if (
+                            attendance.start !== null &&
+                            attendance.end == null
+                        ) {
                             clockedIn.push(user.id);
                         }
                     }
@@ -451,19 +640,29 @@ export default {
             });
             return clockedIn;
         },
-        tobeClockedOutWorshipLeaders() {
+        tobeCheckedOutWorshipLeaders() {
             let clockedIn = [];
-            this.allUsers.forEach(user => {
+            this.allUsers.forEach((user) => {
                 if (this.ongoingShifts.worship_leaders) {
-                    if (user.type !== 1 || user.shift_id !== this.ongoingShifts.worship_leaders.id) {
+                    if (
+                        user.type !== 1 ||
+                        user.shift_id !== this.ongoingShifts.worship_leaders.id
+                    ) {
                         return;
                     }
 
-                    let attendance = user.attendances.find(attendance => attendance.session_id === this.ongoingShifts.worship_leaders.ongoing_session_worship_leaders);
-
+                    let attendance = user.attendances.find(
+                        (attendance) =>
+                            attendance.session_id ===
+                            this.ongoingShifts.worship_leaders
+                                .ongoing_session_worship_leaders
+                    );
 
                     if (attendance !== undefined) {
-                        if (attendance.start !== null && attendance.end == null) {
+                        if (
+                            attendance.start !== null &&
+                            attendance.end == null
+                        ) {
                             clockedIn.push(user.id);
                         }
                     }
@@ -471,37 +670,46 @@ export default {
             });
             return clockedIn;
         },
-        tobeClockedOutViolinists() {
+        tobeCheckedOutViolinists() {
             let clockedIn = [];
-            this.allUsers.forEach(user => {
+            this.allUsers.forEach((user) => {
                 if (this.ongoingShifts.violinists) {
-
-                    if (user.type !== 1 || user.shift_id !== this.ongoingShifts.violinists.id) {
+                    if (
+                        user.type !== 1 ||
+                        user.shift_id !== this.ongoingShifts.violinists.id
+                    ) {
                         return;
                     }
 
-                    let attendance = user.attendances.find(attendance => attendance.session_id === this.ongoingShifts.violinists.ongoing_session_violinists);
-
+                    let attendance = user.attendances.find(
+                        (attendance) =>
+                            attendance.session_id ===
+                            this.ongoingShifts.violinists
+                                .ongoing_session_violinists
+                    );
 
                     if (attendance !== undefined) {
-                        if (attendance.start !== null && attendance.end == null) {
+                        if (
+                            attendance.start !== null &&
+                            attendance.end == null
+                        ) {
                             clockedIn.push(user.id);
                         }
                     }
                 }
             });
             return clockedIn;
-        }
+        },
     },
     async mounted() {
-        await this.$store.dispatch('getShifts');
+        await this.$store.dispatch("getShifts");
 
         let query = this.$route.query.type;
 
         if (query) {
-            await this.$store.dispatch('getUsers', query);
+            await this.$store.dispatch("getUsers", query);
         } else {
-            await this.$store.dispatch('getUsers');
+            await this.$store.dispatch("getUsers");
         }
 
         this.loading = false;
@@ -511,14 +719,14 @@ export default {
         let query = to.query.type;
 
         if (query) {
-            await this.$store.dispatch('getUsers', query);
+            await this.$store.dispatch("getUsers", query);
         } else {
-            await this.$store.dispatch('getUsers');
+            await this.$store.dispatch("getUsers");
         }
         next();
         this.loading = false;
-    }
-}
+    },
+};
 </script>
 
 <style>
@@ -564,5 +772,9 @@ export default {
 
 .list-leave-active {
     position: absolute;
+}
+
+.vs-notification {
+    height: fit-content !important;
 }
 </style>

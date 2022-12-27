@@ -16,9 +16,9 @@ class ShiftController extends Controller
      * All shifts
      */
     public function index(){
-        $keyboardists = Shift::with('sessionKeyboardists')->get();
-        $violinists = Shift::with('sessionViolinists')->get();
-        $worshipLeaders = Shift::with('sessionWorshipLeaders')->get();
+        $keyboardists = Shift::with('sessionKeyboardists', 'sessionsKeyboardists')->get();
+        $violinists = Shift::with('sessionViolinists','sessionsViolinists')->get();
+        $worshipLeaders = Shift::with('sessionWorshipLeaders', 'sessionsWorshipLeaders')->get();
         return response([
             'keyboardists' => $keyboardists,
             'violinists' => $violinists,
