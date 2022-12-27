@@ -34,6 +34,7 @@
         "@babel/polyfill": "^7.11.5",
         "autoprefixer": "10.4.5",
         "bootstrap-vue": "^2.22.0",
+        "gsap": "^3.11.4",
         "primevue": "^2.9.2",
         "vue-router": "^3.0.1",
         "vue-timeago": "5.0.0",

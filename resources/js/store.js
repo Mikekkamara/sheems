@@ -12,6 +12,7 @@ export default{
          * Users
          */
         users: [],
+        usersSearch: [],
 
         /**
          * Shifts
@@ -68,10 +69,14 @@ export default{
          */
         //Mutate users
         setUsers(state, payload){
-            state.users = payload
+            state.users = payload;
+            state.usersSearch = payload;
         },
         searchUsers(state, payload) {
             state.users = state.users.filter(user => user.name.toLowerCase().indexOf(payload.toLowerCase()) >= 0);
+        },
+        resetSearch(state) {
+            state.users = state.usersSearch;
         },
 
         /**

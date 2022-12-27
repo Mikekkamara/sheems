@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow-sm p-2 m-1 bg-white" style="border-radius: 15px">
+    <div class="shadow-sm p-2 m-1 bg-white" style="border-radius: 15px; height: fit-content !important">
         <h4>
             <i class="fa-duotone fa-elephant"></i>
             Sheems Users
@@ -53,65 +53,68 @@
                 <span class="visually-hidden">Loading...</span>
             </div>
         </div>
-        <transition-group v-else tag="div" class="match-cards">
-            <vs-card v-for="user in allUsers" :key="user.id">
-                <template #title>
-                    <div class="d-flex flex-row align-items-center gap-1">
-                        <span class="badge bg-secondary p-1" style="font-size:smaller">
-                            <!-- {{ user.title }} -->
-                            Pastor
-                        </span>
-                        <span> &bull; </span>
-                        <i class="fa-duotone fa-microphone-stand h5 m-0"></i>
-                        <span> &bull; </span>
-                        <i class="fa-duotone fa-piano-keyboard h5 m-0"></i>
-                        <span> &bull; </span>
-                        <i class="fa-duotone fa-violin h5 m-0"></i>
-                    </div>
-                    <h3 class="mt-2">
-                        {{ user.name }}
-                    </h3>
-                </template>
-                <template #img>
-                    <b-img src="../../../../storage/assets/woman-g5474d9095_1920.jpg" alt=""></b-img>
-                </template>
-                <template #text>
-                    <p>
-                        <span>{{ user.from }}</span>
-                        <span> &bull;</span>
-                        <span>{{ user.phone_number }}</span>
-                        <span> &bull;</span>
-                        <span>{{ allShifts['keyboardists'].find(shift => shift.id === user.shift_id).name }}</span>
-                    </p>
-                    <div class="mt-3"
-                        v-if="ongoingShifts.keyboardists || ongoingShifts.worship_leaders || ongoingShifts.violinists">
-                        <vs-button dark icon v-if="showAction(user, false)">
-                            <h5 class="m-0 d-flex flex-row justify-content-center gap-2">
-                                <i class="fa-duotone fa-lightbulb-cfl text-warning fa-shake"></i>
-                                <span class="h6 m-0">
-                                    Clock Out
-                                </span>
-                            </h5>
+        <transition-group v-else tag="ul" name="list" class="match-cards list-unstyled">
+            <li v-for="user in allUsers" :key="user.id">
+
+                <vs-card>
+                    <template #title>
+                        <div class="d-flex flex-row align-items-center gap-1">
+                            <span class="badge bg-secondary p-1" style="font-size:smaller">
+                                <!-- {{ user.title }} -->
+                                Pastor
+                            </span>
+                            <span> &bull; </span>
+                            <i class="fa-duotone fa-microphone-stand h5 m-0"></i>
+                            <span> &bull; </span>
+                            <i class="fa-duotone fa-piano-keyboard h5 m-0"></i>
+                            <span> &bull; </span>
+                            <i class="fa-duotone fa-violin h5 m-0"></i>
+                        </div>
+                        <h3 class="mt-2">
+                            {{ user.name }}
+                        </h3>
+                    </template>
+                    <template #img>
+                        <b-img src="../../../../storage/assets/woman-g5474d9095_1920.jpg" alt=""></b-img>
+                    </template>
+                    <template #text>
+                        <p>
+                            <span>{{ user.from }}</span>
+                            <span> &bull;</span>
+                            <span>{{ user.phone_number }}</span>
+                            <span> &bull;</span>
+                            <span>{{ allShifts['keyboardists'].find(shift => shift.id === user.shift_id).name }}</span>
+                        </p>
+                        <div class="mt-3"
+                            v-if="ongoingShifts.keyboardists || ongoingShifts.worship_leaders || ongoingShifts.violinists">
+                            <vs-button dark icon v-if="showAction(user, false)">
+                                <h5 class="m-0 d-flex flex-row justify-content-center gap-2">
+                                    <i class="fa-duotone fa-lightbulb-cfl text-warning fa-shake"></i>
+                                    <span class="h6 m-0">
+                                        Clock Out
+                                    </span>
+                                </h5>
+                            </vs-button>
+                            <vs-button dark icon v-if="showAction(user)">
+                                <h5 class="m-0 d-flex flex-row justify-content-center gap-2">
+                                    <i class="fa-duotone fa-lightbulb-cfl-on text-warning fa-fade"></i>
+                                    <span class="h6 m-0">
+                                        Clock In
+                                    </span>
+                                </h5>
+                            </vs-button>
+                        </div>
+                    </template>
+                    <template #interactions>
+                        <vs-button danger icon @click="editDetails">
+                            <i class='fa-duotone fa-pen h5 m-0'></i>
                         </vs-button>
-                        <vs-button dark icon v-if="showAction(user)">
-                            <h5 class="m-0 d-flex flex-row justify-content-center gap-2">
-                                <i class="fa-duotone fa-lightbulb-cfl-on text-warning fa-fade"></i>
-                                <span class="h6 m-0">
-                                    Clock In
-                                </span>
-                            </h5>
+                        <vs-button danger icon @click="editDetails">
+                            <i class='fa-duotone fa-eye h5 m-0'></i>
                         </vs-button>
-                    </div>
-                </template>
-                <template #interactions>
-                    <vs-button danger icon @click="editDetails">
-                        <i class='fa-duotone fa-pen h5 m-0'></i>
-                    </vs-button>
-                    <vs-button danger icon @click="editDetails">
-                        <i class='fa-duotone fa-eye h5 m-0'></i>
-                    </vs-button>
-                </template>
-            </vs-card>
+                    </template>
+                </vs-card>
+            </li>
         </transition-group>
 
         <!-- Update Details or create user modal -->
@@ -337,6 +340,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import Search from './Search.vue';
+import gsap from 'gsap';
 export default {
     components: { Search },
     data() {
@@ -407,14 +411,8 @@ export default {
             }
 
         },
-        filterUsers() {
-            if (this.search.length > 1) {
-                this.data.forEach(user => {
-                    if (user.name.toLowerCase() == this.search.toLowerCase()) (
-                        console.log(user.name)
-                    )
-                });
-            }
+        clockInUser() {
+
         }
     },
     computed: {
@@ -519,12 +517,6 @@ export default {
         }
         next();
         this.loading = false;
-    },
-    watch: {
-        search(value) {
-            console.log('watcher from the wall', value)
-            this.filterUsers();
-        }
     }
 }
 </script>
@@ -556,5 +548,21 @@ export default {
 
 .template-modal-header {
     border: none;
+}
+
+.list-move,
+.list-enter-active,
+.list-leave-active {
+    transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+    opacity: 0;
+    transform: translateX(30px);
+}
+
+.list-leave-active {
+    position: absolute;
 }
 </style>
