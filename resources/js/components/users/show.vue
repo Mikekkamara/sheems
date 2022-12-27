@@ -45,17 +45,8 @@
         </div>
 
         <!-- Search -->
-        <div class="d-flex flex-row justify-centent-center justify-content-md-end my-4">
-            <vs-input class="d-none d-md-block" warn border placeholder="Search" type="search">
-                <template #icon>
-                    <i class="fa-duotone fa-magnifying-glass"></i>
-                </template>
-            </vs-input>
-            <vs-input class="d-block d-md-none w-100" warn border placeholder="Search" type="search">
-                <template #icon>
-                    <i class="fa-duotone fa-magnifying-glass"></i>
-                </template>
-            </vs-input>
+        <div class="my-4">
+            <search></search>
         </div>
         <div v-if="loading" class="d-flex flex-row justify-content-center align-items-center p-2 m-2">
             <div class="spinner-border spinner-border-sm" role="status" style="height: 30px; width: 30px;">
@@ -65,19 +56,21 @@
         <transition-group v-else tag="div" class="match-cards">
             <vs-card v-for="user in allUsers" :key="user.id">
                 <template #title>
-                    <div>
-                        <span class="badge bg-warning">
-                            {{ user.title }}
+                    <div class="d-flex flex-row align-items-center gap-1">
+                        <span class="badge bg-secondary p-1" style="font-size:smaller">
+                            <!-- {{ user.title }} -->
+                            Pastor
                         </span>
                         <span> &bull; </span>
-                        <span class="badge bg-secondary">
-                            <i class="fa-duotone fa-piano-keyboard"></i>
-                            {{ userTypes[user.type] }}
-                        </span>
-                        <h3 class="fw-bold mt-3">
-                            {{ user.name }}
-                        </h3>
+                        <i class="fa-duotone fa-microphone-stand h5 m-0"></i>
+                        <span> &bull; </span>
+                        <i class="fa-duotone fa-piano-keyboard h5 m-0"></i>
+                        <span> &bull; </span>
+                        <i class="fa-duotone fa-violin h5 m-0"></i>
                     </div>
+                    <h3 class="mt-2">
+                        {{ user.name }}
+                    </h3>
                 </template>
                 <template #img>
                     <b-img src="../../../../storage/assets/woman-g5474d9095_1920.jpg" alt=""></b-img>
@@ -90,12 +83,33 @@
                         <span> &bull;</span>
                         <span>{{ allShifts['keyboardists'].find(shift => shift.id === user.shift_id).name }}</span>
                     </p>
+                    <div class="mt-3"
+                        v-if="ongoingShifts.keyboardists || ongoingShifts.worship_leaders || ongoingShifts.violinists">
+                        <vs-button dark icon v-if="showAction(user, false)">
+                            <h5 class="m-0 d-flex flex-row justify-content-center gap-2">
+                                <i class="fa-duotone fa-lightbulb-cfl text-warning fa-shake"></i>
+                                <span class="h6 m-0">
+                                    Clock Out
+                                </span>
+                            </h5>
+                        </vs-button>
+                        <vs-button dark icon v-if="showAction(user)">
+                            <h5 class="m-0 d-flex flex-row justify-content-center gap-2">
+                                <i class="fa-duotone fa-lightbulb-cfl-on text-warning fa-fade"></i>
+                                <span class="h6 m-0">
+                                    Clock In
+                                </span>
+                            </h5>
+                        </vs-button>
+                    </div>
                 </template>
                 <template #interactions>
                     <vs-button danger icon @click="editDetails">
                         <i class='fa-duotone fa-pen h5 m-0'></i>
                     </vs-button>
-
+                    <vs-button danger icon @click="editDetails">
+                        <i class='fa-duotone fa-eye h5 m-0'></i>
+                    </vs-button>
                 </template>
             </vs-card>
         </transition-group>
@@ -322,10 +336,14 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import Search from './Search.vue';
 export default {
+    components: { Search },
     data() {
         return {
-            loading: true
+            loading: true,
+            search: '',
+            data: []
         }
     },
     methods: {
@@ -338,10 +356,144 @@ export default {
             }).catch(error => {
                 console.log('error', error)
             });
+        },
+
+        showAction(user, clockIn = true) {
+
+            if (!this.ongoingIndex.includes(user.type)) {
+                return false;
+            }
+            if (this.ongoingShifts.keyboardists) {
+                if (user.shift_id !== this.ongoingShifts.keyboardists.id) {
+                    return false;
+                }
+            }
+
+            if (this.ongoingShifts.violinists) {
+                if (user.shift_id !== this.ongoingShifts.violinists.id) {
+                    return false;
+                }
+            }
+
+            if (this.ongoingShifts.worship_leaders) {
+                if (user.shift_id !== this.ongoingShifts.worship_leaders.id) {
+                    return false;
+                }
+
+            }
+
+            if (clockIn) {
+                switch (user.type) {
+                    case 1:
+                        return !this.tobeClockedOutKeyboardists.includes(user.id);
+                    case 2:
+                        return !this.tobeClockedOutWorshipLeaders.includes(user.id);
+                    case 3:
+                        return !this.tobeClockedOutViolinists.includes(user.id);
+                    default:
+                        break;
+                }
+            } else {
+                switch (user.type) {
+                    case 1:
+                        return this.tobeClockedOutKeyboardists.includes(user.id);
+                    case 2:
+                        return this.tobeClockedOutWorshipLeaders.includes(user.id);
+                    case 3:
+                        return this.tobeClockedOutViolinists.includes(user.id);
+                    default:
+                        break;
+                }
+            }
+
+        },
+        filterUsers() {
+            if (this.search.length > 1) {
+                this.data.forEach(user => {
+                    if (user.name.toLowerCase() == this.search.toLowerCase()) (
+                        console.log(user.name)
+                    )
+                });
+            }
         }
     },
     computed: {
-        ...mapGetters(['allUsers', 'allShifts', 'userTypes'])
+        ...mapGetters(['allUsers', 'allShifts', 'userTypes', 'ongoingShifts']),
+
+        ongoingIndex() {
+            let index = [];
+
+            if (this.ongoingShifts.keyboardists) {
+                index.push(1);
+            } else if (this.ongoingShifts.worship_leaders) {
+                index.push(2);
+            } else if (this.ongoingShifts.violinists) {
+                index.push(3);
+            }
+            return index;
+        },
+        tobeClockedOutKeyboardists() {
+            let clockedIn = [];
+            this.allUsers.forEach(user => {
+                if (this.ongoingShifts.keyboardists) {
+
+                    if (user.type !== 1 || user.shift_id !== this.ongoingShifts.keyboardists.id) {
+                        return;
+                    }
+
+                    let attendance = user.attendances.find(attendance => attendance.session_id === this.ongoingShifts.keyboardists.ongoing_session_keyboardists);
+
+
+                    if (attendance !== undefined) {
+                        if (attendance.start !== null && attendance.end == null) {
+                            clockedIn.push(user.id);
+                        }
+                    }
+                }
+            });
+            return clockedIn;
+        },
+        tobeClockedOutWorshipLeaders() {
+            let clockedIn = [];
+            this.allUsers.forEach(user => {
+                if (this.ongoingShifts.worship_leaders) {
+                    if (user.type !== 1 || user.shift_id !== this.ongoingShifts.worship_leaders.id) {
+                        return;
+                    }
+
+                    let attendance = user.attendances.find(attendance => attendance.session_id === this.ongoingShifts.worship_leaders.ongoing_session_worship_leaders);
+
+
+                    if (attendance !== undefined) {
+                        if (attendance.start !== null && attendance.end == null) {
+                            clockedIn.push(user.id);
+                        }
+                    }
+                }
+            });
+            return clockedIn;
+        },
+        tobeClockedOutViolinists() {
+            let clockedIn = [];
+            this.allUsers.forEach(user => {
+                if (this.ongoingShifts.violinists) {
+
+                    if (user.type !== 1 || user.shift_id !== this.ongoingShifts.violinists.id) {
+                        return;
+                    }
+
+                    let attendance = user.attendances.find(attendance => attendance.session_id === this.ongoingShifts.violinists.ongoing_session_violinists);
+
+
+                    if (attendance !== undefined) {
+                        if (attendance.start !== null && attendance.end == null) {
+                            clockedIn.push(user.id);
+                        }
+                    }
+                }
+            });
+            return clockedIn;
+        }
     },
     async mounted() {
         await this.$store.dispatch('getShifts');
@@ -367,6 +519,12 @@ export default {
         }
         next();
         this.loading = false;
+    },
+    watch: {
+        search(value) {
+            console.log('watcher from the wall', value)
+            this.filterUsers();
+        }
     }
 }
 </script>

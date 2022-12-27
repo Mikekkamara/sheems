@@ -20,16 +20,16 @@
                 </h6>
             </vs-button>
         </router-link>
-        <router-link :to="{ name: 'reports' }" class="text-decoration-none">
-            <vs-button danger transparent :active="$route.path.includes('reports')">
-                <h6 class="m-0 fw-bold">
-                    <i class="fa-duotone fa-chart-network"></i>
-                    <span class="d-none d-sm-inline">
-                        Reports
-                    </span>
-                </h6>
-            </vs-button>
-        </router-link>
+        <vs-button danger transparent disabled :active="$route.path.includes('reports')">
+            <h6 class="m-0 fw-bold">
+                <i class="fa-duotone fa-chart-network"></i>
+                <span class="d-none d-sm-inline">
+                    Reports
+                </span>
+            </h6>
+        </vs-button>
+        <!-- <router-link :to="{ name: 'reports' }" :disabled="true" class="text-decoration-none disabled">
+        </router-link> -->
 
         <form ref="logout-form" action="/logout" method="POST" class="d-none">
             <input type="text" name="_token" :value="csrfToken" hidden>

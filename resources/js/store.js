@@ -44,9 +44,16 @@ export default{
             return state.shifts;
         },
         //Get ongoing shift
-        ongoingShift(state){
-            let ongoing = state.shifts.find(shift => shift.ongoing === 1);
-            return ongoing === undefined ? false : ongoing;
+        ongoingShifts(state) {
+            let keyboardists = state.shifts.keyboardists.find(shift => shift.ongoing_session_keyboardists !== null);
+            let worship_leaders = state.shifts.worship_leaders.find(shift => shift.ongoing_session_worship_leaders !== null);
+            let violinists = state.shifts.violinists.find(shift => shift.ongoing_session_violinists !== null);
+
+            return {
+                keyboardists,
+                worship_leaders,
+                violinists
+            };
         },
         sessions(state){
             return state.sessions.data;
@@ -62,6 +69,9 @@ export default{
         //Mutate users
         setUsers(state, payload){
             state.users = payload
+        },
+        searchUsers(state, payload) {
+            state.users = state.users.filter(user => user.name.toLowerCase().indexOf(payload.toLowerCase()) >= 0);
         },
 
         /**
@@ -142,17 +152,17 @@ export default{
 
         //end Shift
         endShift(context, payload){
-            return axios.get(`/api/v1/shift/end/${payload}`).then(response => response).catch(error => error);
+            return axios.get(`/api/v1/shift/end/${payload.shiftId}/${payload.type}`).then(response => response).catch(error => error);
         },
 
         //Start Shift
         startShift(context, payload){
-            return axios.get(`/api/v1/shift/start/${payload}`).then(response => response).catch(error => error);
+            return axios.get(`/api/v1/shift/start/${payload.shiftId}/${payload.type}`).then(response => response).catch(error => error);
         },
 
         //end and go to next shift
         goToNext(context, payload){
-            return axios.get(`/api/v1/shift/end-and-go-to-next/${payload.shiftId}/${payload.nextId}`).then(response => response).catch(error => error);
+            return axios.get(`/api/v1/shift/end-and-go-to-next/${payload.shiftId}/${payload.nextId}/${payload.type}`).then(response => response).catch(error => error);
         }
     }
 };

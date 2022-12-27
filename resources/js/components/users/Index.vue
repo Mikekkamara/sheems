@@ -4,129 +4,15 @@
             <i class="fa-duotone fa-hippo"></i>
             Sheems
         </h4>
-
-        <!-- <div v-if="ongoingShift === false" class="p-3">
-            <vs-alert warn>
-                <template #icon>
-                    <i class="fa-duotone fa-timer fa-2x"></i>
-                </template>
-                <template #title>
-                    <h4 class="m-0 fw-bold">
-                        Shifts
-                    </h4>
-                </template>
-                There are no ongoing shifts. <br><br>
-                The ongoing shifts will appear here. -->
-        <!-- <div>
-                    <h5 class="m-0 text-center">
-                    </h5> -->
-
-        <!-- <div v-if="shift.loading === false"
-                        class="d-flex flex-column flex-md-row justify-content-center align-items-center p-2 m-2 mb-4">
-                        <vs-button v-for="shift in allShifts" @click="startShift(shift.id)" :key="shift.id" dark>
-                            <h6 class="fw-bold m-0">
-                                <i class="fa-duotone fa-play"></i>
-                                <span class="p-1">
-                                    Commence {{ shift.name }}
-                                </span>
-                            </h6>
-                        </vs-button>
-                    </div>
-                    <div v-else class="d-flex flex-row justify-content-center align-items-center p-2 m-2">
-                        <div class="spinner-border spinner-border-sm" role="status" style="height: 30px; width: 30px;">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div> -->
-        <!-- </div> -->
-        <!-- </vs-alert>
-        </div> -->
-        <!-- <div class="p-3" v-else>
-            <vs-alert warn>
-                <template #icon>
-                    <i class="fa-duotone fa-timer fa-2x"></i>
-                </template>
-                <template #title>
-                    <h4 class="m-0 fw-bold">
-                        Ongoing Shift :
-                        <span class="text-muted">
-                            {{ ongoingShift.name }}
-                        </span>
-                    </h4>
-                </template>
-                <div>
-                    <div class="d-flex flex-row align-items-center">
-                        <h6 class="m-0 fw-bold d-flex flex-row align-items-center">
-                            <i class="fa-duotone fa-clock fa-2x"></i>
-                            <span class="m-2">
-                                Started:
-                            </span>
-                        </h6>
-                        <timeago :datetime="new Date(Date.parse(ongoingShift.session.start))" :auto-update="60">
-                        </timeago>
-                    </div>
-                    <div class="d-flex flex-row align-items-center">
-                        <h6 class="m-0 fw-bold d-flex flex-row align-items-center">
-                            <i class="fa-duotone fa-circle-check fa-2x"></i>
-                            <span class="m-2">
-                                Checked In:
-                            </span>
-                        </h6>
-                        Checked in {{ clockedInUsers.length }} of {{ shiftUsers.length }}
-                    </div>
-                    <div class="d-flex flex-row align-items-center p-2">
-                        <vs-button dark @click="endShift(ongoingShift.id)">
-                            <h6 class="fw-bold m-0">
-                                <i class="fa-duotone fa-ban"></i>
-                                <span class="p-1">
-                                    End Shift
-                                </span>
-                            </h6>
-                        </vs-button>
-                        <vs-button dark @click="goToNext(ongoingShift.id)">
-                            <h6 class="fw-bold m-0">
-                                <i class="fa-duotone fa-ban"></i>
-                                <i class="fa-duotone fa-forward"></i>
-                                <span class="p-1">
-                                    End Shift and Commence {{ allShifts.find(shift => shift.id !== ongoingShift.id).name
-}}
-                                </span>
-                            </h6>
-                        </vs-button>
-                    </div>
-                </div>
-            </vs-alert>
-        </div> -->
-        <!-- <div class="d-flex flex-row mb-3">
-            <router-link :to="{ name: 'homeAll' }" class="text-decoration-none">
-                <vs-button danger flat :active="$route.path.includes('all')">
-                    <h6 class="m-0  fw-bold">
-                        <i class="fa-duotone fa-users"></i>
-                        All Users
-                    </h6>
-                </vs-button>
-            </router-link>
-            <router-link :to="{ name: 'clock' }" class="text-decoration-none">
-                <vs-button danger flat :active="$route.path.includes('clock')">
-                    <h6 class="m-0 fw-bold">
-                        <i class="fa-duotone fa-list-check"></i>
-                        Clock In Users
-                    </h6>
-                </vs-button>
-            </router-link>
-        </div> -->
-        <!-- <div>
-            <transition>
-                <router-view :key="$route.path"></router-view>
-            </transition>
-        </div> -->
         <div class="d-flex flex-row gap-3 mt-5">
-            <vs-button dark block style="max-width:fit-content">
+            <vs-button dark block style="max-width:fit-content"
+                @click="$router.push({ name: 'users', query: { type: 'keyboardists' } })" :loading="loading">
                 <h6 class="m-0">
                     <span class="d-block">
                         <i class="fa-duotone fa-piano-keyboard h2 text-danger m-0"></i>
                     </span>
                     <span class="d-block display-4 mt-3">
-                        200
+                        {{ allUsers.reduce((total, user) => (user.type === 1 ? total + 1 : total), 0) }}
                     </span>
                     <span class="text-muted">
                         Keyboardists
@@ -136,13 +22,14 @@
                     <i class='fa-duotone fa-arrow-right h3 m-0'></i>
                 </template>
             </vs-button>
-            <vs-button dark block style="max-width:fit-content">
+            <vs-button dark block style="max-width:fit-content"
+                @click="$router.push({ name: 'users', query: { type: 'violinists' } })" :loading="loading">
                 <h6 class="m-0">
                     <span class="d-block">
                         <i class="fa-duotone fa-violin h2 text-danger m-0"></i>
                     </span>
                     <span class="d-block display-4 mt-3">
-                        200
+                        {{ allUsers.reduce((total, user) => (user.type === 3 ? total + 1 : total), 0) }}
                     </span>
                     <span class="text-muted">
                         Violinists
@@ -152,13 +39,14 @@
                     <i class='fa-duotone fa-arrow-right h3 m-0'></i>
                 </template>
             </vs-button>
-            <vs-button dark block style="max-width:fit-content">
+            <vs-button dark block style="max-width:fit-content"
+                @click="$router.push({ name: 'users', query: { type: 'worship-leaders' } })" :loading="loading">
                 <h6 class="m-0">
                     <span class="d-block">
                         <i class="fa-duotone fa-microphone-stand h2 text-danger m-0"></i>
                     </span>
                     <span class="d-block display-4 mt-3">
-                        200
+                        {{ allUsers.reduce((total, user) => (user.type === 2 ? total + 1 : total), 0) }}
                     </span>
                     <span class="text-muted">
                         Worship Leaders
@@ -177,28 +65,83 @@
                         Keyboardists
                     </span>
                 </h5>
-                <vs-alert warn>
-                    <template #icon>
-                        <i class="fa-duotone fa-timer fa-2x"></i>
-                    </template>
-                    <template #title>
-                        <h4 class="m-0 fw-bold">
-                            Shifts
-                        </h4>
-                    </template>
-                    There are no ongoing shifts. <br><br>
-                    The ongoing shifts will appear here.
-                </vs-alert>
-                <div class="d-flex flex-row gap-1 mt-2">
-                    <vs-button style="max-width:fit-content" v-for="shift in allShifts" @click="startShift(shift.id)"
-                        :key="shift.id" dark>
-                        <h6 class="fw-bold m-0">
-                            <i class="fa-duotone fa-play"></i>
-                            <span class="p-1">
-                                Commence {{ shift.name }}
-                            </span>
-                        </h6>
-                    </vs-button>
+                <div v-if="ongoingShifts.keyboardists === undefined">
+                    <vs-alert warn>
+                        <template #icon>
+                            <i class="fa-duotone fa-timer fa-2x"></i>
+                        </template>
+                        <template #title>
+                            <h4 class="m-0 fw-bold">
+                                Shifts
+                            </h4>
+                        </template>
+                        There are no ongoing shifts. <br><br>
+                        The ongoing shifts will appear here.
+                    </vs-alert>
+                    <div class="d-flex flex-row gap-1 mt-2">
+                        <vs-button style="max-width:fit-content" v-for="shiftItem in allShifts.keyboardists"
+                            @click="startShift(shiftItem.id, 1)" :key="shiftItem.id"
+                            :loading="(shift.loading.id === shiftItem.id) && (shift.loading.keyboardists.start)" dark>
+                            <h6 class="fw-bold m-0">
+                                <i class="fa-duotone fa-play"></i>
+                                <span class="p-1">
+                                    Commence {{ shiftItem.name }}
+                                </span>
+                            </h6>
+                        </vs-button>
+                    </div>
+                </div>
+                <div v-else>
+                    <vs-alert warn>
+                        <template #icon>
+                            <i class="fa-duotone fa-timer fa-2x"></i>
+                        </template>
+                        <template #title>
+                            <h4 class="m-0 fw-bold">
+                                Ongoing Shift :
+                                <span class="text-muted">
+                                    {{ ongoingShifts.keyboardists.name }}
+                                </span>
+                            </h4>
+                        </template>
+                        <span class="m-2 d-block">
+                            Started:
+                            <timeago
+                                :datetime="new Date(Date.parse(ongoingShifts.keyboardists.session_keyboardists.start))"
+                                :auto-update="60">
+                            </timeago>
+                        </span>
+                        <span class="m-2 d-block">
+                            Checked In:
+                            {{ clockedInKeyboardists }} / {{ totalKeyboardists }}
+                        </span>
+                    </vs-alert>
+                    <div>
+                        <div class="d-flex flex-row align-items-center p-2">
+                            <vs-button dark :loading="shift.loading.keyboardists.end"
+                                @click="endShift(ongoingShifts.keyboardists.id, 1)">
+                                <h6 class="fw-bold m-0">
+                                    <i class="fa-duotone fa-ban"></i>
+                                    <span class="p-1">
+                                        End Shift
+                                    </span>
+                                </h6>
+                            </vs-button>
+                            <vs-button dark :loading="shift.loading.keyboardists.goToNext"
+                                @click="goToNext(ongoingShifts.keyboardists.id, 1)">
+                                <h6 class="fw-bold m-0">
+                                    <i class="fa-duotone fa-ban"></i>
+                                    <i class="fa-duotone fa-forward"></i>
+                                    <span class="p-1">
+                                        End Shift and Commence
+                                        {{ allShifts.keyboardists.find(shift => shift.id !==
+        ongoingShifts.keyboardists.id).name
+}}
+                                    </span>
+                                </h6>
+                            </vs-button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div>
@@ -208,28 +151,83 @@
                         Violinists
                     </span>
                 </h5>
-                <vs-alert warn>
-                    <template #icon>
-                        <i class="fa-duotone fa-timer fa-2x"></i>
-                    </template>
-                    <template #title>
-                        <h4 class="m-0 fw-bold">
-                            Shifts
-                        </h4>
-                    </template>
-                    There are no ongoing shifts. <br><br>
-                    The ongoing shifts will appear here.
-                </vs-alert>
-                <div class="d-flex flex-row gap-1 mt-2">
-                    <vs-button style="max-width:fit-content" v-for="shift in allShifts" @click="startShift(shift.id)"
-                        :key="shift.id" dark>
-                        <h6 class="fw-bold m-0">
-                            <i class="fa-duotone fa-play"></i>
-                            <span class="p-1">
-                                Commence {{ shift.name }}
-                            </span>
-                        </h6>
-                    </vs-button>
+                <div v-if="ongoingShifts.violinists === undefined">
+
+                    <vs-alert warn>
+                        <template #icon>
+                            <i class="fa-duotone fa-timer fa-2x"></i>
+                        </template>
+                        <template #title>
+                            <h4 class="m-0 fw-bold">
+                                Shifts
+                            </h4>
+                        </template>
+                        There are no ongoing shifts. <br><br>
+                        The ongoing shifts will appear here.
+                    </vs-alert>
+                    <div class="d-flex flex-row gap-1 mt-2">
+                        <vs-button style="max-width:fit-content" v-for="shiftItem in allShifts.violinists"
+                            @click="startShift(shiftItem.id, 3)" :key="shiftItem.id"
+                            :loading="(shift.loading.id === shiftItem.id) && (shift.loading.violinists.start)" dark>
+                            <h6 class="fw-bold m-0">
+                                <i class="fa-duotone fa-play"></i>
+                                <span class="p-1">
+                                    Commence {{ shiftItem.name }}
+                                </span>
+                            </h6>
+                        </vs-button>
+                    </div>
+                </div>
+                <div v-else>
+                    <vs-alert warn>
+                        <template #icon>
+                            <i class="fa-duotone fa-timer fa-2x"></i>
+                        </template>
+                        <template #title>
+                            <h4 class="m-0 fw-bold">
+                                Ongoing Shift :
+                                <span class="text-muted">
+                                    {{ ongoingShifts.violinists.name }}
+                                </span>
+                            </h4>
+                        </template>
+                        <span class="m-2 d-block">
+                            Started:
+                            <timeago :datetime="new Date(Date.parse(ongoingShifts.violinists.session_violinists.start))"
+                                :auto-update="60">
+                            </timeago>
+                        </span>
+                        <span class="m-2 d-block">
+                            Checked In:
+                            {{ clockedInViolinists }} / {{ totalViolinists }}
+                        </span>
+                    </vs-alert>
+                    <div>
+                        <div class="d-flex flex-row align-items-center p-2">
+                            <vs-button dark :loading="shift.loading.violinists.end"
+                                @click="endShift(ongoingShifts.violinists.id, 3)">
+                                <h6 class="fw-bold m-0">
+                                    <i class="fa-duotone fa-ban"></i>
+                                    <span class="p-1">
+                                        End Shift
+                                    </span>
+                                </h6>
+                            </vs-button>
+                            <vs-button dark :loading="shift.loading.violinists.goToNext"
+                                @click="goToNext(ongoingShifts.violinists.id, 3)">
+                                <h6 class="fw-bold m-0">
+                                    <i class="fa-duotone fa-ban"></i>
+                                    <i class="fa-duotone fa-forward"></i>
+                                    <span class="p-1">
+                                        End Shift and Commence
+                                        {{ allShifts.violinists.find(shift => shift.id !==
+        ongoingShifts.violinists.id).name
+}}
+                                    </span>
+                                </h6>
+                            </vs-button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div>
@@ -239,28 +237,83 @@
                         Worship Leaders
                     </span>
                 </h5>
-                <vs-alert warn>
-                    <template #icon>
-                        <i class="fa-duotone fa-timer fa-2x"></i>
-                    </template>
-                    <template #title>
-                        <h4 class="m-0 fw-bold">
-                            Shifts
-                        </h4>
-                    </template>
-                    There are no ongoing shifts. <br><br>
-                    The ongoing shifts will appear here.
-                </vs-alert>
-                <div class="d-flex flex-row gap-1 mt-2">
-                    <vs-button style="max-width:fit-content" v-for="shift in allShifts" @click="startShift(shift.id)"
-                        :key="shift.id" dark>
-                        <h6 class="fw-bold m-0">
-                            <i class="fa-duotone fa-play"></i>
-                            <span class="p-1">
-                                Commence {{ shift.name }}
-                            </span>
-                        </h6>
-                    </vs-button>
+                <div v-if="ongoingShifts.worship_leaders === undefined">
+                    <vs-alert warn>
+                        <template #icon>
+                            <i class="fa-duotone fa-timer fa-2x"></i>
+                        </template>
+                        <template #title>
+                            <h4 class="m-0 fw-bold">
+                                Shifts
+                            </h4>
+                        </template>
+                        There are no ongoing shifts. <br><br>
+                        The ongoing shifts will appear here.
+                    </vs-alert>
+                    <div class="d-flex flex-row gap-1 mt-2">
+                        <vs-button style="max-width:fit-content" v-for="shiftItem in allShifts.worship_leaders"
+                            @click="startShift(shiftItem.id, 2)" :key="shiftItem.id"
+                            :loading="(shift.loading.id === shiftItem.id) && (shift.loading.worshipLeaders.start)" dark>
+                            <h6 class="fw-bold m-0">
+                                <i class="fa-duotone fa-play"></i>
+                                <span class="p-1">
+                                    Commence {{ shiftItem.name }}
+                                </span>
+                            </h6>
+                        </vs-button>
+                    </div>
+                </div>
+                <div v-else>
+                    <vs-alert warn>
+                        <template #icon>
+                            <i class="fa-duotone fa-timer fa-2x"></i>
+                        </template>
+                        <template #title>
+                            <h4 class="m-0 fw-bold">
+                                Ongoing Shift :
+                                <span class="text-muted">
+                                    {{ ongoingShifts.worship_leaders.name }}
+                                </span>
+                            </h4>
+                        </template>
+                        <span class="m-2 d-block">
+                            Started:
+                            <timeago
+                                :datetime="new Date(Date.parse(ongoingShifts.worship_leaders.session_worship_leaders.start))"
+                                :auto-update="60">
+                            </timeago>
+                        </span>
+                        <span class="m-2 d-block">
+                            Checked In:
+                            {{ clockedInWorshipLeaders }} / {{ totalWorshipLeaders }}
+                        </span>
+                    </vs-alert>
+                    <div>
+                        <div class="d-flex flex-row align-items-center p-2">
+                            <vs-button dark :loading="shift.loading.worshipLeaders.end"
+                                @click="endShift(ongoingShifts.worship_leaders.id, 2)">
+                                <h6 class="fw-bold m-0">
+                                    <i class="fa-duotone fa-ban"></i>
+                                    <span class="p-1">
+                                        End Shift
+                                    </span>
+                                </h6>
+                            </vs-button>
+                            <vs-button dark :loading="shift.loading.worshipLeaders.goToNext"
+                                @click="goToNext(ongoingShifts.worship_leaders.id, 2)">
+                                <h6 class="fw-bold m-0">
+                                    <i class="fa-duotone fa-ban"></i>
+                                    <i class="fa-duotone fa-forward"></i>
+                                    <span class="p-1">
+                                        End Shift and Commence
+                                        {{ allShifts.worship_leaders.find(shift => shift.id !==
+        ongoingShifts.worship_leaders.id).name
+                                        }}
+                                    </span>
+                                </h6>
+                            </vs-button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -273,8 +326,32 @@ export default {
     data() {
         return {
             shift: {
-                loading: false
+                loading: {
+                    id: '',
+                    keyboardists: {
+                        start: false,
+                        end: false,
+                        goToNext: false
+                    },
+                    worshipLeaders: {
+                        start: false,
+                        end: false,
+                        goToNext: false
+                    },
+                    violinists: {
+                        start: false,
+                        end: false,
+                        goToNext: false
+                    }
+                }
             },
+            loadingTypes: [
+                'analyst',
+                'keyboardists',
+                'worshipLeaders',
+                'violinists'
+            ],
+            loading: true,
             errors: false,
             createForm: {
                 name: '',
@@ -288,26 +365,74 @@ export default {
             }
         }
     },
-    mounted() {
-        this.$store.dispatch('getShifts');
+    async mounted() {
+        await this.$store.dispatch('getShifts');
+        this.loading = false;
     },
     computed: {
-        ...mapGetters(['allUsers', 'allShifts', 'ongoingShift', 'csrfToken']),
+        ...mapGetters(['allUsers', 'allShifts', 'ongoingShifts', 'csrfToken']),
         shiftUsers() {
             return this.allUsers.filter(user => user.shift_id === this.ongoingShift.id);
         },
-        clockedInUsers() {
-            return this.shiftUsers.filter(user => {
-                let attendance = user.attendances.find(item => item.session_id === this.ongoingShift.ongoing_session);
+        clockedInKeyboardists() {
+            return this.allUsers.reduce((total, user) => {
+                if (user.type !== 1 || user.shift_id !== this.ongoingShifts.keyboardists.id) {
+                    return total;
+                }
+                let attendance = user.attendances.find(attendance => attendance.session_id === this.ongoingShifts.keyboardists.ongoing_session_keyboardists);
+
 
                 if (attendance !== undefined) {
                     if (attendance.start !== null && attendance.end == null) {
-                        return true;
+                        return total + 1;
                     }
-                } else {
-                    return false;
                 }
-            })
+
+                return total;
+            }, 0);
+        },
+        clockedInViolinists() {
+            return this.allUsers.reduce((total, user) => {
+                if (user.type !== 3 || user.shift_id !== this.ongoingShifts.violinists.id) {
+                    return total;
+                }
+                let attendance = user.attendances.find(attendance => attendance.session_id === this.ongoingShifts.violinists.ongoing_session_violinists);
+
+
+                if (attendance !== undefined) {
+                    if (attendance.start !== null && attendance.end == null) {
+                        return total + 1;
+                    }
+                }
+
+                return total;
+            }, 0);
+        },
+        clockedInWorshipLeaders() {
+            return this.allUsers.reduce((total, user) => {
+                if (user.type !== 3 || user.shift_id !== this.ongoingShifts.worship_leaders.id) {
+                    return total;
+                }
+                let attendance = user.attendances.find(attendance => attendance.session_id === this.ongoingShifts.worship_leaders.ongoing_session_worship_leaders);
+
+
+                if (attendance !== undefined) {
+                    if (attendance.start !== null && attendance.end == null) {
+                        return total + 1;
+                    }
+                }
+
+                return total;
+            }, 0);
+        },
+        totalKeyboardists() {
+            return this.allUsers.reduce((total, user) => (user.type === 1 && user.shift_id === this.ongoingShifts.keyboardists.id ? total + 1 : total), 0)
+        },
+        totalViolinists() {
+            return this.allUsers.reduce((total, user) => (user.type === 3 && user.shift_id === this.ongoingShifts.violinists.id ? total + 1 : total), 0)
+        },
+        totalWorshipLeaders() {
+            return this.allUsers.reduce((total, user) => (user.type === 2 && user.shift_id === this.ongoingShifts.worship_leaders.id ? total + 1 : total), 0)
         }
     },
     methods: {
@@ -343,38 +468,54 @@ export default {
             }
 
         },
-        startShift(shiftId) {
-            this.shift.loading = true;
+        startShift(shiftId, type) {
+            this.shift.loading.id = shiftId;
 
-            this.$store.dispatch('startShift', shiftId).then(response => {
+            this.shift.loading[this.loadingTypes[type]].start = true;
+
+            this.$store.dispatch('startShift', { shiftId, type }).then(async response => {
                 // console.log('start', response.data);
-                this.shift.loading = false;
-                window.location.reload();
-            });
-        },
-        endShift(shiftId) {
-            this.shift.loading = true;
 
-            this.$store.dispatch('endShift', shiftId).then(response => {
-                // console.log('end', response.data);
-                this.shift.loading = false;
-                window.location.reload();
+
+                await this.$store.dispatch('getShifts').then(shifts => {
+                    this.shift.loading[this.loadingTypes[type]].start = false;
+                })
+                // window.location.reload();
             });
         },
-        goToNext(shiftId) {
+        async endShift(shiftId, type) {
+            this.shift.loading.id = shiftId;
+
+            this.shift.loading[this.loadingTypes[type]].end = true;
+
+            await this.$store.dispatch('endShift', { shiftId, type }).then(async response => {
+                // console.log('end', response.data);
+                await this.$store.dispatch('getShifts').then(shifts => {
+                    this.shift.loading[this.loadingTypes[type]].end = false;
+                });
+            });
+        },
+        async goToNext(shiftId, type) {
+            this.shift.loading.id = shiftId;
+
+            this.shift.loading[this.loadingTypes[type]].goToNext = true;
+
             let payload = {
-                nextId: this.allShifts.find(shift => shift.id !== shiftId).id,
-                shiftId
+                nextId: this.allShifts.keyboardists.find(shift => shift.id !== shiftId).id,
+                shiftId,
+                type
             };
 
-            this.$store.dispatch('goToNext', payload).then(response => {
-                // console.log('next', response.data);
-                window.location.reload();
+            await this.$store.dispatch('goToNext', payload).then(async response => {
+
+                await this.$store.dispatch('getShifts').then(shifts => {
+                    this.shift.loading[this.loadingTypes[type]].goToNext = false;
+                });
             })
         }
     },
-    watch: {
-
+    beforeRouteUpdate(to, from, next) {
+        console.log('hello')
     }
 }
 </script>
