@@ -5,35 +5,46 @@
             Sheems Users
         </h4>
         <!-- Nav -->
-        <div class="d-flex flex-row gap-2 mt-5">
-            <vs-button style="max-width: fit-content" @click="$router.push({ query: {} })" dark flat
-                :active="Object.keys($route.query).length === 0">
-                <h6 class="fw-bold m-0">
-                    <i class="fa-duotone fa-timer"></i>
-                    <span class="p-1"> All </span>
-                </h6>
-            </vs-button>
-            <vs-button style="max-width: fit-content" @click="$router.push({ query: { type: 'keyboardists' } })"
-                :active="$route.query.type === 'keyboardists'" dark flat>
-                <h6 class="fw-bold m-0">
-                    <i class="fa-duotone fa-piano-keyboard"></i>
-                    <span class="p-1 d-none d-md-inline"> Keyboardists </span>
-                </h6>
-            </vs-button>
-            <vs-button style="max-width: fit-content" @click="$router.push({ query: { type: 'violinists' } })"
-                :active="$route.query.type === 'violinists'" dark flat>
-                <h6 class="fw-bold m-0">
-                    <i class="fa-duotone fa-violin"></i>
-                    <span class="p-1 d-none d-md-inline"> Violinists </span>
-                </h6>
-            </vs-button>
-            <vs-button style="max-width: fit-content" @click="$router.push({ query: { type: 'worship-leaders' } })"
-                :active="$route.query.type === 'worship-leaders'" dark flat>
-                <h6 class="fw-bold m-0">
-                    <i class="fa-duotone fa-microphone-stand"></i>
-                    <span class="p-1 d-none d-md-inline"> Worship Leaders </span>
-                </h6>
-            </vs-button>
+        <div class="d-flex flex-row justify-content-between mt-5">
+            <div class="d-flex flex-row gap-2 ">
+
+                <vs-button style="max-width: fit-content" @click="$router.push({ query: {} })" dark flat
+                    :active="Object.keys($route.query).length === 0">
+                    <h6 class="fw-bold m-0">
+                        <i class="fa-duotone fa-timer"></i>
+                        <span class="p-1"> All </span>
+                    </h6>
+                </vs-button>
+                <vs-button style="max-width: fit-content" @click="$router.push({ query: { type: 'keyboardists' } })"
+                    :active="$route.query.type === 'keyboardists'" dark flat>
+                    <h6 class="fw-bold m-0">
+                        <i class="fa-duotone fa-piano-keyboard"></i>
+                        <span class="p-1 d-none d-md-inline"> Keyboardists </span>
+                    </h6>
+                </vs-button>
+                <vs-button style="max-width: fit-content" @click="$router.push({ query: { type: 'violinists' } })"
+                    :active="$route.query.type === 'violinists'" dark flat>
+                    <h6 class="fw-bold m-0">
+                        <i class="fa-duotone fa-violin"></i>
+                        <span class="p-1 d-none d-md-inline"> Violinists </span>
+                    </h6>
+                </vs-button>
+                <vs-button style="max-width: fit-content" @click="$router.push({ query: { type: 'worship-leaders' } })"
+                    :active="$route.query.type === 'worship-leaders'" dark flat>
+                    <h6 class="fw-bold m-0">
+                        <i class="fa-duotone fa-microphone-stand"></i>
+                        <span class="p-1 d-none d-md-inline"> Worship Leaders </span>
+                    </h6>
+                </vs-button>
+            </div>
+            <div>
+                <vs-button style="max-width: fit-content" @click="$bvModal.show('user-modal')" warn flat>
+                    <h6 class="fw-bold m-0">
+                        <i class="fa-duotone fa-person-circle-plus"></i>
+                        <span class="p-1 d-none d-md-inline"> Create User </span>
+                    </h6>
+                </vs-button>
+            </div>
         </div>
 
         <!-- Search -->
@@ -51,10 +62,13 @@
                     <template #title>
                         <div class="d-flex flex-row align-items-center gap-1">
                             <span class="badge bg-secondary p-1" style="font-size: smaller">
-                                <!-- {{ user.title }} -->
-                                Pastor
+                                {{ titles[user.title] }}
                             </span>
-                            <span class="d-flex flex-row align-items-center gap-1" v-if="user.type === 1">
+                            <span class="d-flex flex-row align-items-center gap-1" v-if="user.type === 0">
+                                <span> &bull; </span>
+                                <i class="fa-duotone fa-face-glasses h5 m-0"></i>
+                            </span>
+                            <span class="d-flex flex-row align-items-center gap-1" v-else-if="user.type === 1">
                                 <span> &bull; </span>
                                 <i class="fa-duotone fa-piano-keyboard h5 m-0"></i>
                             </span>
@@ -229,21 +243,32 @@
                     <i class="fa-duotone fa-times-circle h5 m-0"></i>
                 </vs-button>
             </div>
-            <div class="mt-4" v-if="createForm.name !== ''">
-                <h3 class="font-monospace">Update Details</h3>
+            <div class="mt-4">
+                <h3 class="font-monospace">
+                    {{ create ? 'Create User' : 'Update Details' }}
+                </h3>
 
-                <form action="" class="mt-4 d-flex flex-column gap-3">
-                    <div>
-                        <h5 class="fw-bold">Profile Picture</h5>
-                        <div class="mt-2">
-                            <b-avatar size="100" src="../../../../storage/assets/woman-g5474d9095_1920.jpg"
-                                alt=""></b-avatar>
-                        </div>
-                        <div class="my-3">
-                            <span class="p-2 h6 fw-bold">Update Profile Picture</span>
-                            <input type="file" name="profile" @change="uploadProfilePicture" ref="profile"
-                                class="form-control border-0" style="border-radius: 10px;" />
-                        </div>
+                <div v-if="create === false">
+                    <h5 class="fw-bold">Profile Picture</h5>
+                    <div class="mt-2">
+                        <b-avatar size="100" :src="`../../../../storage/profile/${createForm.profile}`"
+                            :alt="`${createForm.name}'s profile picture`"></b-avatar>
+                    </div>
+                    <div class="my-3">
+                        <span class="p-2 h6 fw-bold">Update Profile Picture</span>
+                        <input type="file" @change="uploadProfilePicture" ref="profile" class="form-control border-0"
+                            style="border-radius: 10px;" />
+                    </div>
+                </div>
+                <form id="createUserForm" method="post" @submit.prevent.stop class="mt-4 d-flex flex-column gap-3">
+                    <!--      Token        -->
+                    <input hidden name="_token" :value="csrfToken" />
+                    <div v-if="create">
+                        <h5 class="fw-bold d-flex flex-row align-items-center">
+                            <i class="fa-duotone fa-user"></i>
+                            <span class="m-2">Profile Picture</span>
+                        </h5>
+                        <input type="file" ref="profile" class="form-control border-0" style="border-radius: 10px;" />
                     </div>
                     <div class="d-flex flex-wrap flex-row items-center gap-3">
                         <div class="flex-grow-1">
@@ -251,8 +276,8 @@
                                 <i class="fa-duotone fa-user-group-crown"></i>
                                 <span class="m-2">Title</span>
                             </h5>
-                            <select name="title" id="title" class="form-control border-0" v-model="createForm.title"
-                                style="border-radius: 10px">
+                            <select @change="updateProfile" name="title" id="title" class="form-control border-0"
+                                v-model="createForm.title" style="border-radius: 10px">
                                 <option v-for="(title, index) in titles" :key="`${index}-titles`" :value="index">
                                     {{ title }}
                                 </option>
@@ -263,8 +288,8 @@
                                 <i class="fa-duotone fa-phone"></i>
                                 <span class="m-2">Type</span>
                             </h5>
-                            <select name="type" id="type" class="form-control border-0" v-model="createForm.type"
-                                style="border-radius: 10px">
+                            <select @change="updateProfile" name="type" id="type" class="form-control border-0"
+                                v-model="createForm.type" style="border-radius: 10px">
                                 <option v-for="(item, i) in userTypes" :key="i" :value="i">
                                     {{ item }}
                                 </option>
@@ -277,14 +302,16 @@
                                 <i class="fa-duotone fa-signature"></i>
                                 <span class="m-2">Name</span>
                             </h5>
-                            <vs-input type="text" name="name" v-model="createForm.name"></vs-input>
+                            <vs-input @change="updateProfile" type="text" name="name"
+                                v-model="createForm.name"></vs-input>
                         </div>
                         <div class="flex-grow-1">
                             <h5 class="fw-bold d-flex flex-row align-items-center">
                                 <i class="fa-duotone fa-at"></i>
                                 <span class="m-2">Email</span>
                             </h5>
-                            <vs-input type="email" name="email" v-model="createForm.email"></vs-input>
+                            <vs-input @change="updateProfile" type="email" name="email"
+                                v-model="createForm.email"></vs-input>
                         </div>
                     </div>
                     <div class="d-flex flex-wrap flex-row items-center gap-3">
@@ -293,14 +320,16 @@
                                 <i class="fa-duotone fa-location-dot"></i>
                                 <span class="m-2">From</span>
                             </h5>
-                            <vs-input type="text" name="from" v-model="createForm.from"></vs-input>
+                            <vs-input @change="updateProfile" type="text" name="from"
+                                v-model.lazy="createForm.from"></vs-input>
                         </div>
                         <div class="flex-grow-1">
                             <h5 class="fw-bold d-flex flex-row align-items-center">
                                 <i class="fa-duotone fa-phone"></i>
                                 <span class="m-2">Phone Number</span>
                             </h5>
-                            <vs-input type="tel" name="phone_number" v-model="createForm.phone"></vs-input>
+                            <vs-input @change="updateProfile" type="tel" name="phone_number"
+                                v-model.lazy="createForm.phone"></vs-input>
                         </div>
                     </div>
                     <div class="d-flex flex-wrap flex-row items-center gap-3">
@@ -309,16 +338,26 @@
                                 <i class="fa-duotone fa-timer"></i>
                                 <span class="m-2">Shift</span>
                             </h5>
-                            <select type="text" name="shift" class="form-control border-0" v-model="createForm.shift"
-                                style="border-radius: 10px">
+                            <select type="text" @change="updateProfile" name="shift" class="form-control border-0"
+                                v-model="createForm.shift" style="border-radius: 10px">
                                 <option v-for="(shift, index) in allShifts.keyboardists" :value="shift.id" :key="index">
                                     {{ shift.name }}
                                 </option>
                             </select>
                         </div>
+                        <div v-if="create === false" class="flex-grow-1 mt-5" style="max-width: 50%">
+                            <vs-switch :disabled="shiftLeaderExists(createForm.type, createForm.shift)"
+                                v-model="createForm.shift_leader" dark>
+                                <span class="fs-6 fw-bold" :key="`${createForm.shift_leader}-shift-leader`">
+                                    <i class='fa-duotone'
+                                        :class="[createForm.shift_leader ? 'fa-check' : 'fa-times']"></i>
+                                    Shift Leader
+                                </span>
+                            </vs-switch>
+                        </div>
                     </div>
-                    <div class="d-flex flex-wrap flex-row items-center gap-3 mt-5">
-                        <vs-button dark block style="max-width: 50%" class="mx-auto">
+                    <div v-if="create" class="d-flex flex-wrap flex-row items-center gap-3 mt-5">
+                        <vs-button @click="createUser" dark block style="max-width: 50%" class="mx-auto">
                             <h5 class="m-0 fw-bold">
                                 <span> Create </span>
                                 <i class="fa-duotone fa-arrow-right"></i>
@@ -327,115 +366,6 @@
                     </div>
                 </form>
             </div>
-            <!-- <form @submit.stop.prevent id="createUserForm" method="post">
-                     Token
-                <input hidden name="_token" :value="csrfToken" />
-
-                <div class="d-flex flex-column flex-md-row align-items-center justify-content-evenly">
-                    <div>
-                        <h6 class="fw-bold d-flex flex-row align-items-center">
-                            <i class="fa-duotone fa-signature fa-2x"></i>
-                            <span class="m-2">Name</span>
-                        </h6>
-                        <vs-input type="text" name="name" v-model="createForm.name"></vs-input>
-                    </div>
-                    <div>
-                        <h6 class="fw-bold d-flex flex-row align-items-center">
-                            <i class="fa-duotone fa-at fa-2x"></i>
-                            <span class="m-2">Email</span>
-                        </h6>
-                        <vs-input type="email" name="email" v-model="createForm.email"></vs-input>
-                    </div>
-                </div>
-                <div class="mb-3 container p-3">
-                    <h6 class="fw-bold d-flex flex-row align-items-center justify-content-center">
-                        <i class="fa-duotone fa-user fa-2x"></i>
-                        <span class="m-2">Profile</span>
-                    </h6>
-                    <input type="file" name="profile" ref="profile" class="form-control border-0"
-                        style="border-radius: 10px;" />
-                </div>
-                <div class="d-flex flex-column flex-md-row align-items-center justify-content-evenly">
-                    <div>
-                        <h6 class="fw-bold d-flex flex-row align-items-center">
-                            <i class="fa-duotone fa-location-dot fa-2x"></i>
-                            <span class="m-2">From</span>
-                        </h6>
-                        <vs-input type="text" name="from" v-model="createForm.from"></vs-input>
-                    </div>
-                    <div>
-                        <h6 class="fw-bold d-flex flex-row align-items-center">
-                            <i class="fa-duotone fa-phone fa-2x"></i>
-                            <span class="m-2">Phone Number</span>
-                        </h6>
-                        <vs-input type="tel" name="phone_number" v-model="createForm.phone"></vs-input>
-                    </div>
-                </div>
-                <div class="d-flex flex-column flex-md-row align-items-center justify-content-evenly my-2 p-2">
-                    <div class="flex-grow-1 m-2">
-                        <h6 class="fw-bold d-flex flex-row align-items-center">
-                            <i class="fa-duotone fa-user-group-crown fa-2x"></i>
-                            <span class="m-2">Title</span>
-                        </h6>
-                        <select name="title" id="title" v-model="createForm.title" class="form-control border-0"
-                            style="border-radius: 10px;">
-                            <option value="0" selected>None</option>
-                            <option value="1">Pastor</option>
-                            <option value="2">Bishop</option>
-                        </select>
-                    </div>
-                    <div class="flex-grow-1 m-2">
-                        <h6 class="fw-bold d-flex flex-row align-items-center">
-                            <i class="fa-duotone fa-phone fa-2x"></i>
-                            <span class="m-2">Type</span>
-                        </h6>
-                        <select name="type" id="type" v-model="createForm.type" class="form-control border-0"
-                            style="border-radius: 10px;">
-                            <option
-                                v-for="(item, i) in ['Shift Leader / keyboardists', 'Data analyst', 'Keyboardist', 'Shift Leader / Worshippers', 'Worshipper', 'Violinist']"
-                                :key="i" :value="i">
-                                {{ item }}
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mb-3 container p-4">
-                    <h6 class="fw-bold d-flex flex-row align-items-center">
-                        <i class="fa-duotone fa-timer fa-2x"></i>
-                        <span class="m-2">Shift</span>
-                    </h6>
-                    <select type="text" name="shift" v-model="createForm.shift" class="form-control border-0"
-                        style="border-radius: 10px;">
-                        <option v-for="(shift, index) in allShifts" :selected="index === 0" :key="index">
-                            {{ shift.name }}
-                        </option>
-                    </select>
-                    <vs-input type="text" name="shift" v-model="createForm.shift" list="shift-list"></vs-input>
-                    <datalist id="shift-list">
-                        <option v-for="(shift, index) in allShifts" :selected="index === 0" :key="index">
-                            {{ shift.name }}
-                        </option>
-                    </datalist>
-                </div>
-                <div v-if="errors">
-                    <h6 class="m-0 text-danger fw-bold">
-                        Please fill all fields
-                    </h6>
-                </div>
-                <div class="container d-flex flex-row justify-content-between align-items-center">
-                    <vs-button dark flat :loading="createForm.loading" @click="createUser()">
-                        <h6 class="m-0 fw-bold">
-                            Create
-                        </h6>
-                    </vs-button>
-                    <vs-button class="my-3" danger flat @click="$bvModal.hide('add-user')">
-                        <h6 class="m-0 fw-bold">
-                            <i class="fa-solid fa-times"></i>
-                            Close
-                        </h6>
-                    </vs-button>
-                </div>
-            </form> -->
         </b-modal>
     </div>
 </template>
@@ -456,6 +386,8 @@ export default {
             data: [],
             attendance: "",
             attendanceUser: {},
+            create: true,
+            errors: false,
             createForm: {
                 user_id: '',
                 name: '',
@@ -464,6 +396,7 @@ export default {
                 from: '',
                 type: 2,
                 title: 0,
+                shift_leader: false,
                 shift: '',
                 phone: '',
                 loading: false
@@ -471,20 +404,97 @@ export default {
         };
     },
     methods: {
-        uploadProfilePicture() {
+        shiftLeaderExists(type, shiftId) {
+            let shift = this.allShifts[[, 'keyboardists', 'worship_leaders', 'violinists'][type]].find(shift => shift.id === shiftId);
+
+            if (shift) {
+                return shift.users_exists;
+            } else {
+                return true;
+            }
+        },
+        createUser() {
+            this.createForm.loading = true;
+
+            this.errors = false;
+
+            let { name, email, from, shift, phone } = this.createForm;
+
+            if (name === '' || from === '' || shift === '' || phone === '') {
+                this.errors = true;
+
+                this.createForm.loading = false;
+            } else {
+                //Get form
+                let form = document.querySelector('#createUserForm');
+
+                let createForm = new FormData(form);
+
+                this.$store.dispatch('createUser', createForm).then(async response => {
+                    // console.log(response)
+                    this.createForm.id = response.data.id;
+
+
+                    try {
+
+                        let file = this.$refs.profile.files[0];
+
+                        await this.uploadProfilePicture().then(res => {
+                            this.$vs.notification({
+                                content: SuccessClock,
+                                duration: 6000,
+                            });
+                        });
+                        this.createForm.loading = false;
+
+                        this.$bvModal.hide('add-user');
+
+                    } catch (error) {
+                        return true;
+                    }
+
+                    // this.createForm = { name: '', email: '', from: '', shift: '', phone: '', loading: false };
+                });
+            }
+        },
+        updateProfile() {
+            if (this.create) {
+                return;
+            }
+            let form = document.querySelector('#createUserForm');
+
+            let updateForm = new FormData(form);
+
+            let payload = {
+                id: this.createForm.user_id,
+                data: updateForm
+            };
+
+            this.$store.dispatch('updateProfile', payload);
+
+        },
+        async uploadProfilePicture() {
             let form = new FormData();
             //Attach profile image
             form.append('profile', this.$refs.profile.files[0]);
             form.append('user_id', this.createForm.user_id);
-            this.$store.dispatch('updateProfilePicture', form);
+            return await this.$store.dispatch('updateProfilePicture', form).then(response => {
+                this.createForm.profile = response;
+                this.$vs.notification({
+                    content: SuccessClock,
+                    duration: 4000,
+                });
+            });
         },
         editDetails(user) {
+            this.create = false;
             this.createForm = {
                 user_id: user.id,
                 name: user.name,
                 email: user.email,
                 profile: user.profile,
                 from: user.from,
+                shift_leader: user.shift_leader,
                 type: user.type,
                 title: user.title ? user.title : 0,
                 shift: user.shift_id,
@@ -566,8 +576,10 @@ export default {
                         attendance.session_id ===
                         this.ongoingShifts.keyboardists.ongoing_session_keyboardists
                 );
-                if (attendance.start !== null && attendance.end !== null) {
-                    return false;
+                if (attendance) {
+                    if (attendance.start !== null && attendance.end !== null) {
+                        return false;
+                    }
                 }
             }
 
@@ -771,6 +783,23 @@ export default {
             await this.$store.dispatch("getUsers");
         }
 
+        this.$root.$on('bv::modal::hide', (bvEvent, modalId) => {
+            // console.log('Modal is about to be shown', bvEvent, modalId)
+            if (modalId === 'user-modal') {
+                this.createForm = {
+                    user_id: '',
+                    name: '',
+                    email: '',
+                    profile: '',
+                    from: '',
+                    type: 2,
+                    title: 0,
+                    shift: '',
+                    phone: '',
+                    loading: false
+                };
+            }
+        });
         this.loading = false;
     },
     async beforeRouteUpdate(to, from, next) {

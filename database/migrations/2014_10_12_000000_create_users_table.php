@@ -17,9 +17,10 @@ class CreateUsersTable extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->string('email')->nullable();
-            $table->smallInteger('title')->nullable();
+            $table->smallInteger('title')->default(0);
             $table->integer('type')->default(3);
             $table->string('user_number')->unique();
+            $table->boolean('shift_leader')->default(false);
             $table->string('phone_number')->nullable();
             $table->string('from')->nullable();
             $table->string('profile')->default('default.png');

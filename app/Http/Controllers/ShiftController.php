@@ -16,9 +16,15 @@ class ShiftController extends Controller
      * All shifts
      */
     public function index(){
-        $keyboardists = Shift::with('sessionKeyboardists', 'sessionsKeyboardists')->get();
-        $violinists = Shift::with('sessionViolinists','sessionsViolinists')->get();
-        $worshipLeaders = Shift::with('sessionWorshipLeaders', 'sessionsWorshipLeaders')->get();
+        $keyboardists = Shift::with('sessionKeyboardists', 'sessionsKeyboardists')->withExists(['users' => function ($q) {
+            $q->where('type', 1)->where('shift_leader', true);
+        }])->get();
+        $violinists = Shift::with('sessionViolinists','sessionsViolinists')->withExists(['users' => function ($q) {
+            $q->where('type', 3)->where('shift_leader', true);
+        }])->get();
+        $worshipLeaders = Shift::with('sessionWorshipLeaders', 'sessionsWorshipLeaders')->withExists(['users' => function ($q) {
+            $q->where('type', 2)->where('shift_leader', true);
+        }])->get();
         return response([
             'keyboardists' => $keyboardists,
             'violinists' => $violinists,

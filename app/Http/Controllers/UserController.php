@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attendance;
+use App\Models\Session;
 use App\Models\User;
+use App\Models\Shift;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -61,16 +64,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $filename = '';
-
-        if ($request->file('profile')) {
-            $file = $request->file('profile');
-            $filename = date('YmdHi') . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('public/profile', $filename);
-        }else{
-            $filename = 'default.png';
-        }
-        User::create([
+        $user = User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'title' => $request->input('title'),
@@ -78,34 +72,33 @@ class UserController extends Controller
             'user_number' => Str::random(2),
             'phone_number' => $request->input('phone_number'),
             'from' => $request->input('from'),
-            'profile' => $filename,
             'shift_id' => $request->input('shift'),
             'password' => Hash::make('secret')
         ]);
-        return response(User::with('attendances', 'shift.sessions')->get(), 200);
-    }
-    public function setProfile(Request $request){
-        // $file = $request->file('profile');
-        // $filename = date('YmdHi') . '.' . $file->getClientOriginalExtension();
-        // $file->storeAs('public/profile', $filename);
 
-        // User::find($request->input('user_id'))->update([
-        //     'profile' => $filename
-        // ]);
+        $sessions = Session::where('type', $request->input('type'))->get();
 
-        return response('$filename')->isSuccessful();
+        collect($sessions)->each(function($session) use($user){
+            Attendance::create([
+                'user_id' => $user->id,
+                'session_id' => $session->id
+            ]);
+        });
+
+        return response($user, 200);
     }
+
     public function updateProfile(Request $request){
-        return 'kamara';
-        // $file = $request->file('profile');
-        // $filename = date('YmdHi') . '.' . $file->getClientOriginalExtension();
-        // $file->storeAs('public/profile', $filename);
+        $file = $request->file('profile');
+        $filename = date('YmdHi') . '.' . $file->getClientOriginalExtension();
 
-        // User::find($request->input('user_id'))->update([
-        //     'profile' => $filename
-        // ]);
+        $file->storeAs('public/profile', $filename);
 
-        // return response($filename)->isSuccessful();
+        User::find($request->input('user_id'))->update([
+            'profile' => $filename
+        ]);
+
+        return response($filename,200);
     }
 
     /**
@@ -145,28 +138,20 @@ class UserController extends Controller
     {
         $user = User::find($id);
 
-        $filename = '';
 
-        if ($request->file('profile')) {
-            $file = $request->file('profile');
-            $filename = date('YmdHi') . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('public/profile', $filename);
-        }else{
-            $filename = 'default.png';
-        }
         $user->update([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'title' => $request->input('title'),
             'type' => $request->input('type'),
             'user_number' => Str::random(2),
+            'shift_leader' => $request->input('shift_leader'),
             'phone_number' => $request->input('phone_number'),
             'from' => $request->input('from'),
-            'profile' => $filename,
             'shift_id' => $request->input('shift')
         ]);
 
-        return response(User::with('attendances', 'shift.sessions')->get(), 200);
+        return response($user->refresh(), 200);
     }
 
     /**

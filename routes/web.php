@@ -18,15 +18,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return redirect('/login');
 });
-/**
- * Static routes
- */
-Route::prefix('organization')->middleware('guest')->group(function(){
-    Route::view('/{any}', 'static.index')->where('any', '.*');
-});
-
 
 Auth::routes([ 'register' =>  false ]);
 
-Route::get('/{any}',[HomeController::class, 'index'])->where('any', '.*');
-
+// Route::get('/users',function(){
+//     return 'hello world';
+// });
+Route::middleware('auth:sanctum')->group(function(){
+    Route::get('/home',[HomeController::class, 'index']);
+    Route::get('/users', [HomeController::class, 'index']);
+});

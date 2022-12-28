@@ -40,6 +40,18 @@ class Shift extends Model
         return $this->hasMany(Session::class)->oldest();
     }
 
+    public function shift_leader_keyboardists(){
+        $this->hasOne(User::class, 'shift_id', 'id');
+    }
+
+    public function shift_leader_worship_leaders(){
+        $this->hasOne(User::class, 'shift_id', 'id');
+    }
+
+    public function shift_leader_violinists(){
+        $this->hasOne(User::class, 'shift_id', 'id');
+    }
+
     public function users(){
         return $this->hasMany(User::class);
     }

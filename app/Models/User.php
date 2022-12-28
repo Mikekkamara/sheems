@@ -26,6 +26,7 @@ class User extends Authenticatable
         'type',
         'from',
         'user_number',
+        'shift_leader',
         'profile',
         'shift_id',
         'phone_number',

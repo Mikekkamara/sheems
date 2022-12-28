@@ -149,37 +149,37 @@ export default{
         async getUsers(context, payload = undefined) {
             if (payload) {
 
-                return await axios.get(`/api/v1/user/${payload}`).then(response => {
+                return await axios.get(`/api/v1/users/${payload}`).then(response => {
                     context.commit('setUsers', response.data);
                 });
             }
-            return await axios.get('/api/v1/user').then(response => {
+            return await axios.get('/api/v1/users').then(response => {
                 context.commit('setUsers', response.data);
             });
         },
         async updateProfilePicture(context, payload) {
-            return await axios.post('/api/v1/user/profile', payload, { headers: { "Content-Type" : "multipart/form-data" } }).then(response => {
-                return response;
-            });
+            return await axios.post('/api/v1/users/profile', payload).then(response => {
+                return response.data;
+            }).catch(error => error);
         },
 
 
         //Create a new user
         async createUser(context, payload){
-            return await axios.post('/api/v1/user/create', payload, { headers: { "Content-Type" : "multipart/form-data" } }).then(response => {
+            return await axios.post('/api/v1/users/create', payload, { headers: { "Content-Type" : "multipart/form-data" } }).then(response => {
                 return response;
             });
         },
 
         //Update profile
         async updateProfile(context, payload){
-            return await axios.post(`/api/v1/user/update/${payload.id}`, payload.data,{ headers: { "Content-type":"multipart/form-data; charset=utf-8; boundary=" + Math.random().toString().substr(2) } }).then(response => {
+            return await axios.post(`/api/v1/users/update/${payload.id}`, payload.data,{ headers: { "Content-type":"multipart/form-data; charset=utf-8; boundary=" + Math.random().toString().substr(2) } }).then(response => {
                 // console.log(response.data);
                 return response;
             })
         },
         async checkIn(context, payload){
-            return await axios.get(`/api/v1/user/check-in/${payload}`).then(async res => {
+            return await axios.get(`/api/v1/users/check-in/${payload}`).then(async res => {
                 await context.dispatch('getUsers');
                 await context.dispatch('getShifts');
                 context.commit('setLatest', payload);
@@ -187,7 +187,7 @@ export default{
             });
         },
         async checkOut(context, payload){
-            return await axios.get(`/api/v1/user/check-out/${payload}`).then(async res => {
+            return await axios.get(`/api/v1/users/check-out/${payload}`).then(async res => {
                 await context.dispatch('getUsers');
                 await context.dispatch('getShifts');
                 context.commit('setLatest', payload);
