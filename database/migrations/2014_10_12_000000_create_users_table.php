@@ -22,7 +22,7 @@ class CreateUsersTable extends Migration
             $table->string('user_number')->unique();
             $table->string('phone_number')->nullable();
             $table->string('from')->nullable();
-            $table->string('profile')->nullable();
+            $table->string('profile')->default('default.png');
             $table->foreignUuid('shift_id')->references('id')->on('shifts')->onDelete('cascade');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

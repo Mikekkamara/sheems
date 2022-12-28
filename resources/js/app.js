@@ -9,7 +9,6 @@ import Vuesax  from 'vuesax';
 import StoreData from './store';
 import router from './router.js';
 import VueTimeago from 'vue-timeago';
-import PrimeVue from 'primevue/config';
 import BootstrapVue  from 'bootstrap-vue';
 
 
@@ -25,7 +24,6 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
  */
 Vue.use(Vuex);
 Vue.use(Vuesax);
-Vue.use(PrimeVue);
 Vue.use(BootstrapVue);
 Vue.use(VueTimeago, {
     name: 'Timeago',

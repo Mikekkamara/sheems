@@ -84,6 +84,29 @@ class UserController extends Controller
         ]);
         return response(User::with('attendances', 'shift.sessions')->get(), 200);
     }
+    public function setProfile(Request $request){
+        // $file = $request->file('profile');
+        // $filename = date('YmdHi') . '.' . $file->getClientOriginalExtension();
+        // $file->storeAs('public/profile', $filename);
+
+        // User::find($request->input('user_id'))->update([
+        //     'profile' => $filename
+        // ]);
+
+        return response('$filename')->isSuccessful();
+    }
+    public function updateProfile(Request $request){
+        return 'kamara';
+        // $file = $request->file('profile');
+        // $filename = date('YmdHi') . '.' . $file->getClientOriginalExtension();
+        // $file->storeAs('public/profile', $filename);
+
+        // User::find($request->input('user_id'))->update([
+        //     'profile' => $filename
+        // ]);
+
+        // return response($filename)->isSuccessful();
+    }
 
     /**
      * Display the specified resource.

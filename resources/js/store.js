@@ -8,6 +8,12 @@ export default{
             'Worship Leader',
             'Violinist'
         ],
+        titles: [
+            'none',
+            'Pastor',
+            'Overseer',
+            'Bishop'
+        ],
         /**
          * Users
          */
@@ -30,6 +36,9 @@ export default{
     getters: {
         csrfToken(){
             return window.Laravel.csrfToken;
+        },
+        titles(state) {
+            return state.titles;
         },
         latest(state) {
             return state.lastClocked;
@@ -83,14 +92,41 @@ export default{
         },
         resetSearch(state) {
             state.users = state.usersSearch;
+            console.log('reset')
         },
         setLatest(state, payload) {
             state.lastClocked = state.users.find(user => user.id === payload);
         },
-        filterCheckedIn(state) {
-            state.users = state.users.filter(user => {
-                return user.attendances.find(attendance => attendance.start !== null && attendance.end == null);
-            });
+        filter(state, payload) {
+            state.users = state.usersSearch;
+
+            if (payload.shiftA !== payload.shiftB) {
+                try {
+
+                    if ((payload.shiftA === false && payload.shiftB === true)) {
+                        let shiftBId = state.shifts.keyboardists.find(shift => shift.name === 'Shift B').id;
+                        state.users = state.users.filter(user => user.shift_id === shiftBId);
+                    }
+                    if ((payload.shiftA === true && payload.shiftB === false)) {
+                        let shiftAId = state.shifts.keyboardists.find(shift => shift.name === 'Shift A').id;
+                        state.users = state.users.filter(user => user.shift_id === shiftAId);
+                    }
+                } catch (error) {
+                    return true;
+                }
+            }
+
+            if (payload.checkedIn) {
+                state.users = state.users.filter(user => {
+                    return user.attendances.find(attendance => attendance.start !== null && attendance.end == null);
+                });
+            }
+
+            let searchUsers = localStorage.getItem('search');
+
+            if (searchUsers) {
+                state.users = state.users.filter(user => user.name.toLowerCase().indexOf(searchUsers.toLowerCase()) >= 0);
+            }
         },
         /**
          * Shifts
@@ -119,6 +155,11 @@ export default{
             }
             return await axios.get('/api/v1/user').then(response => {
                 context.commit('setUsers', response.data);
+            });
+        },
+        async updateProfilePicture(context, payload) {
+            return await axios.post('/api/v1/user/profile', payload, { headers: { "Content-Type" : "multipart/form-data" } }).then(response => {
+                return response;
             });
         },
 

@@ -17,9 +17,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -30,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/keyboardists', [UserController::class, 'keyboardists']);
         Route::get('/worship-leaders', [UserController::class, 'worshipLeaders']);
         Route::post('/update/{id}', [UserController::class, 'update']);
+        Route::post('/profile', [UserController::class, 'setProfile']);
         Route::post('/create', [UserController::class, 'store']);
         Route::get('/check-in/{id}', [AttendanceController::class, 'checkIn']);
         Route::get('/check-out/{id}', [AttendanceController::class, 'checkOut']);

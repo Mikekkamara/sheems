@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow-sm p-2 m-1 bg-white" style="border-radius: 15px; height: fit-content !important">
+    <div class="shadow-sm p-2 bg-white" style="border-radius: 15px; height: fit-content !important">
         <h4>
             <i class="fa-duotone fa-elephant"></i>
             Sheems Users
@@ -31,9 +31,7 @@
                 :active="$route.query.type === 'worship-leaders'" dark flat>
                 <h6 class="fw-bold m-0">
                     <i class="fa-duotone fa-microphone-stand"></i>
-                    <span class="p-1 d-none d-md-inline">
-                        Worship Leaders
-                    </span>
+                    <span class="p-1 d-none d-md-inline"> Worship Leaders </span>
                 </h6>
             </vs-button>
         </div>
@@ -56,12 +54,18 @@
                                 <!-- {{ user.title }} -->
                                 Pastor
                             </span>
-                            <span> &bull; </span>
-                            <i class="fa-duotone fa-microphone-stand h5 m-0"></i>
-                            <span> &bull; </span>
-                            <i class="fa-duotone fa-piano-keyboard h5 m-0"></i>
-                            <span> &bull; </span>
-                            <i class="fa-duotone fa-violin h5 m-0"></i>
+                            <span class="d-flex flex-row align-items-center gap-1" v-if="user.type === 1">
+                                <span> &bull; </span>
+                                <i class="fa-duotone fa-piano-keyboard h5 m-0"></i>
+                            </span>
+                            <span class="d-flex flex-row align-items-center gap-1" v-else-if="user.type === 2">
+                                <span> &bull; </span>
+                                <i class="fa-duotone fa-microphone-stand h5 m-0"></i>
+                            </span>
+                            <span class="d-flex flex-row align-items-center gap-1" v-else-if="user.type === 3">
+                                <span> &bull; </span>
+                                <i class="fa-duotone fa-violin h5 m-0"></i>
+                            </span>
                         </div>
                         <h3 class="mt-2">
                             {{ user.name }}
@@ -104,7 +108,7 @@
                         </div>
                     </template>
                     <template #interactions>
-                        <vs-button danger icon @click="editDetails">
+                        <vs-button danger icon @click="editDetails(user)">
                             <i class="fa-duotone fa-pen h5 m-0"></i>
                         </vs-button>
                         <vs-button danger icon @click="showAttendanceUser(user.id)">
@@ -114,9 +118,18 @@
                 </vs-card>
             </li>
         </transition-group>
-
+        <div v-if="allUsers.length === 0" class="p-2 m-1 rounded-3 bg-light">
+            <div class="d-flex flex-row flex-wrap gap-1 align-items-center">
+                <span>
+                    <i class="fa-duotone fa-face-sad-tear fa-3x text-danger"></i>
+                </span>
+                <span class="h5 m-0">
+                    We could not find any matches for your search.
+                </span>
+            </div>
+        </div>
         <!-- Show attendance modal -->
-        <b-modal v-if="showAttendance" id="attendance-modal" size="lg" scrollable centered hide-footer hide-header
+        <b-modal v-if="attendanceUser" id="attendance-modal" size="lg" scrollable centered hide-footer hide-header
             content-class="template-modal" header-class="template-modal-header">
             <div class="d-flex flex-row justify-content-end" style="position: sticky; top: 0; z-index: 20">
                 <vs-button danger icon circle @click="hideAttendances()">
@@ -129,8 +142,8 @@
                     <b-avatar size="100" src="../../../../storage/assets/woman-g5474d9095_1920.jpg" alt=""></b-avatar>
                     <p class="mt-2 mb-0 d-flex flex-row gap-1 align-items-center">
                         <span class="badge bg-secondary p-1" style="font-size: smaller">
-                            <!-- {{ user.title }} -->
-                            Pastor
+                            {{ attendanceUser.title }}
+                            <!-- Pastor -->
                         </span>
                         <span> &bull; </span>
                         <i class="fa-duotone fa-microphone-stand h5 m-0"></i>
@@ -147,7 +160,7 @@
                         <span> &bull;</span>
                         <span>{{ attendanceUser.phone_number }}</span>
                     </p>
-                    <hr>
+                    <hr />
                     <p class="h5 fw-bold text-muted">
                         <i class="fa-duotone fa-clock-rotate-left"></i>
                         Attendance History
@@ -161,43 +174,47 @@
                         <span class="fs-4 m-0 fw-bold">
                             {{ session.name }}
                         </span>
-                        <span>
-                            &bull;
-                        </span>
+                        <span> &bull; </span>
                         <span v-if="session.end !== null && session.start !== null" class="badge h6 m-0 p-1 bg-success">
                             Completed
                         </span>
-                        <span v-else class="badge h6 m-0 p-1 bg-danger">
-                            pending
-                        </span>
+                        <span v-else class="badge h6 m-0 p-1 bg-danger"> pending </span>
                     </p>
                     <div>
                         <span class="d-block">
                             <i class="fa-duotone fa-circle-play"></i>
-                            <span>
-                                Checked In:
-                            </span>
-                            <span :class="[session.attendance.start === null ? 'text-danger' : '']">
-                                {{ session.attendance.start === null ? 'Did not checkin' :
-        formatAttendance(session.attendance.start)
+                            <span> Checked In: </span>
+                            <span :class="[
+    session.attendance.start === null ? 'text-danger' : '',
+]">
+                                {{
+        session.attendance.start === null
+            ? "Did not checkin"
+            : formatAttendance(session.attendance.start)
 }}
                                 <span v-if="session.attendance.start !== null" class="text-danger">
-                                    {{ formatLateness(calculateLateness(session.created_at, session.attendance.start))
+                                    {{
+        formatLateness(
+            calculateLateness(
+                session.created_at,
+                session.attendance.start
+            )
+        )
 }}
                                 </span>
                             </span>
                         </span>
                         <span class="d-block">
                             <i class="fa-duotone fa-circle-stop"></i>
-                            <span>
-                                Checked Out:
-                            </span>
+                            <span> Checked Out: </span>
                             <span :class="[session.attendance.end === null ? 'text-danger' : '']">
-                                {{ session.attendance.end === null ? 'Did not checkout' :
-        formatAttendance(session.attendance.end)
-
+                                {{
+        session.attendance.end === null
+            ? session.end === null
+                ? "--"
+                : "Did not checkout"
+            : formatAttendance(session.attendance.end)
 }}
-
                             </span>
                         </span>
                     </div>
@@ -212,7 +229,7 @@
                     <i class="fa-duotone fa-times-circle h5 m-0"></i>
                 </vs-button>
             </div>
-            <div class="mt-4">
+            <div class="mt-4" v-if="createForm.name !== ''">
                 <h3 class="font-monospace">Update Details</h3>
 
                 <form action="" class="mt-4 d-flex flex-column gap-3">
@@ -222,6 +239,11 @@
                             <b-avatar size="100" src="../../../../storage/assets/woman-g5474d9095_1920.jpg"
                                 alt=""></b-avatar>
                         </div>
+                        <div class="my-3">
+                            <span class="p-2 h6 fw-bold">Update Profile Picture</span>
+                            <input type="file" name="profile" @change="uploadProfilePicture" ref="profile"
+                                class="form-control border-0" style="border-radius: 10px;" />
+                        </div>
                     </div>
                     <div class="d-flex flex-wrap flex-row items-center gap-3">
                         <div class="flex-grow-1">
@@ -229,11 +251,11 @@
                                 <i class="fa-duotone fa-user-group-crown"></i>
                                 <span class="m-2">Title</span>
                             </h5>
-                            <select name="title" id="title" class="form-control border-0" style="border-radius: 10px">
-                                <option value="0" selected>None</option>
-                                <option value="1">Pastor</option>
-                                <option value="2">Overseer</option>
-                                <option value="3">Bishop</option>
+                            <select name="title" id="title" class="form-control border-0" v-model="createForm.title"
+                                style="border-radius: 10px">
+                                <option v-for="(title, index) in titles" :key="`${index}-titles`" :value="index">
+                                    {{ title }}
+                                </option>
                             </select>
                         </div>
                         <div class="flex-grow-1">
@@ -241,15 +263,9 @@
                                 <i class="fa-duotone fa-phone"></i>
                                 <span class="m-2">Type</span>
                             </h5>
-                            <select name="type" id="type" class="form-control border-0" style="border-radius: 10px">
-                                <option v-for="(item, i) in [
-    'Shift Leader / keyboardists',
-    'Data analyst',
-    'Keyboardist',
-    'Shift Leader / Worshippers',
-    'Worshipper',
-    'Violinist',
-]" :key="i" :value="i">
+                            <select name="type" id="type" class="form-control border-0" v-model="createForm.type"
+                                style="border-radius: 10px">
+                                <option v-for="(item, i) in userTypes" :key="i" :value="i">
                                     {{ item }}
                                 </option>
                             </select>
@@ -261,14 +277,14 @@
                                 <i class="fa-duotone fa-signature"></i>
                                 <span class="m-2">Name</span>
                             </h5>
-                            <vs-input type="text" name="name"></vs-input>
+                            <vs-input type="text" name="name" v-model="createForm.name"></vs-input>
                         </div>
                         <div class="flex-grow-1">
                             <h5 class="fw-bold d-flex flex-row align-items-center">
                                 <i class="fa-duotone fa-at"></i>
                                 <span class="m-2">Email</span>
                             </h5>
-                            <vs-input type="email" name="email"></vs-input>
+                            <vs-input type="email" name="email" v-model="createForm.email"></vs-input>
                         </div>
                     </div>
                     <div class="d-flex flex-wrap flex-row items-center gap-3">
@@ -277,14 +293,14 @@
                                 <i class="fa-duotone fa-location-dot"></i>
                                 <span class="m-2">From</span>
                             </h5>
-                            <vs-input type="text" name="from"></vs-input>
+                            <vs-input type="text" name="from" v-model="createForm.from"></vs-input>
                         </div>
                         <div class="flex-grow-1">
                             <h5 class="fw-bold d-flex flex-row align-items-center">
                                 <i class="fa-duotone fa-phone"></i>
                                 <span class="m-2">Phone Number</span>
                             </h5>
-                            <vs-input type="tel" name="phone_number"></vs-input>
+                            <vs-input type="tel" name="phone_number" v-model="createForm.phone"></vs-input>
                         </div>
                     </div>
                     <div class="d-flex flex-wrap flex-row items-center gap-3">
@@ -293,10 +309,11 @@
                                 <i class="fa-duotone fa-timer"></i>
                                 <span class="m-2">Shift</span>
                             </h5>
-                            <select type="text" name="shift" class="form-control border-0" style="border-radius: 10px">
-                                <!-- <option v-for="(shift, index) in allShifts" :selected="index === 0" :key="index">
+                            <select type="text" name="shift" class="form-control border-0" v-model="createForm.shift"
+                                style="border-radius: 10px">
+                                <option v-for="(shift, index) in allShifts.keyboardists" :value="shift.id" :key="index">
                                     {{ shift.name }}
-                                </option> -->
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -437,39 +454,88 @@ export default {
             loading: true,
             search: "",
             data: [],
-            attendance: '',
-            showAttendance: false
+            attendance: "",
+            attendanceUser: {},
+            createForm: {
+                user_id: '',
+                name: '',
+                email: '',
+                profile: '',
+                from: '',
+                type: 2,
+                title: 0,
+                shift: '',
+                phone: '',
+                loading: false
+            }
         };
     },
     methods: {
-        editDetails() {
+        uploadProfilePicture() {
+            let form = new FormData();
+            //Attach profile image
+            form.append('profile', this.$refs.profile.files[0]);
+            form.append('user_id', this.createForm.user_id);
+            this.$store.dispatch('updateProfilePicture', form);
+        },
+        editDetails(user) {
+            this.createForm = {
+                user_id: user.id,
+                name: user.name,
+                email: user.email,
+                profile: user.profile,
+                from: user.from,
+                type: user.type,
+                title: user.title ? user.title : 0,
+                shift: user.shift_id,
+                phone: user.phone_number,
+                loading: false
+            };
             this.$bvModal.show("user-modal");
         },
         showAttendanceUser(userId) {
-            this.attendance = userId;
-            this.showAttendance = true;
-            this.$bvModal.show('attendance-modal');
+            let user = this.allUsers.find((user) => user.id === userId);
+
+            user.shift = this.allShifts[
+                [, "keyboardists", "worship_leaders", "violinists"][user.type]
+            ].find((shift) => shift.id === user.shift_id);
+            user.sessions = user.shift[
+                [
+                    ,
+                    "sessions_keyboardists",
+                    "sessions_worship_leaders",
+                    "sessions_violinists",
+                ][user.type]
+            ].filter((session) => {
+                return (session.attendance = user.attendances.find(
+                    (attendance) => attendance.session_id === session.id
+                ));
+            });
+
+            this.attendanceUser = user;
+
+            this.$bvModal.show("attendance-modal");
         },
         hideAttendances() {
-            this.$bvModal.hide('attendance-modal');
-            this.attendance = '';
+            this.$bvModal.hide("attendance-modal");
+            this.attendance = "";
             this.showAttendance = false;
         },
         formatTime(date) {
-            return new Date(Date.parse(date)).toLocaleString('en-GB', {
+            return new Date(Date.parse(date)).toLocaleString("en-GB", {
                 weekday: "long",
                 year: "numeric",
                 month: "long",
                 day: "numeric",
-                hour: 'numeric',
-                minute: 'numeric'
-            })
+                hour: "numeric",
+                minute: "numeric",
+            });
         },
         formatAttendance(date) {
-            return new Date(Date.parse(date)).toLocaleString('en-GB', {
-                hour: 'numeric',
-                minute: 'numeric'
-            })
+            return new Date(Date.parse(date)).toLocaleString("en-GB", {
+                hour: "numeric",
+                minute: "numeric",
+            });
         },
         calculateLateness(sessionStart, date) {
             let start = Date.parse(sessionStart);
@@ -482,9 +548,9 @@ export default {
             if (late > 1800000) {
                 let diff = late / 3600000;
                 if (diff > 1) {
-                    return `${Math.floor(diff)} hr(s) late`
+                    return `${Math.floor(diff)} hr(s) late`;
                 }
-                return `${diff * 10} mins late`
+                return `${diff * 10} mins late`;
             }
         },
         showAction(user, clockIn = true) {
@@ -495,10 +561,26 @@ export default {
                 if (user.shift_id !== this.ongoingShifts.keyboardists.id) {
                     return false;
                 }
+                let attendance = user.attendances.find(
+                    (attendance) =>
+                        attendance.session_id ===
+                        this.ongoingShifts.keyboardists.ongoing_session_keyboardists
+                );
+                if (attendance.start !== null && attendance.end !== null) {
+                    return false;
+                }
             }
 
             if (this.ongoingShifts.violinists) {
                 if (user.shift_id !== this.ongoingShifts.violinists.id) {
+                    return false;
+                }
+                let attendance = user.attendances.find(
+                    (attendance) =>
+                        attendance.session_id ===
+                        this.ongoingShifts.violinists.ongoing_session_violinists
+                );
+                if (attendance.start !== null && attendance.end !== null) {
                     return false;
                 }
             }
@@ -507,18 +589,22 @@ export default {
                 if (user.shift_id !== this.ongoingShifts.worship_leaders.id) {
                     return false;
                 }
+                let attendance = user.attendances.find(
+                    (attendance) =>
+                        attendance.session_id ===
+                        this.ongoingShifts.worship_leaders.ongoing_session_worship_leaders
+                );
+                if (attendance.start !== null && attendance.end !== null) {
+                    return false;
+                }
             }
 
             if (clockIn) {
                 switch (user.type) {
                     case 1:
-                        return !this.tobeCheckedOutKeyboardists.includes(
-                            user.id
-                        );
+                        return !this.tobeCheckedOutKeyboardists.includes(user.id);
                     case 2:
-                        return !this.tobeCheckedOutWorshipLeaders.includes(
-                            user.id
-                        );
+                        return !this.tobeCheckedOutWorshipLeaders.includes(user.id);
                     case 3:
                         return !this.tobeCheckedOutViolinists.includes(user.id);
                     default:
@@ -527,13 +613,9 @@ export default {
             } else {
                 switch (user.type) {
                     case 1:
-                        return this.tobeCheckedOutKeyboardists.includes(
-                            user.id
-                        );
+                        return this.tobeCheckedOutKeyboardists.includes(user.id);
                     case 2:
-                        return this.tobeCheckedOutWorshipLeaders.includes(
-                            user.id
-                        );
+                        return this.tobeCheckedOutWorshipLeaders.includes(user.id);
                     case 3:
                         return this.tobeCheckedOutViolinists.includes(user.id);
                     default:
@@ -585,19 +667,8 @@ export default {
             "userTypes",
             "ongoingShifts",
             "latest",
+            "titles"
         ]),
-        attendanceUser() {
-            if (this.attendance !== '') {
-                let user = this.allUsers.find(user => user.id === this.attendance);
-
-                user.shift = this.allShifts[[, 'keyboardists', 'worship_leaders', 'violinists'][user.type]].find(shift => shift.id === user.shift_id);
-                user.sessions = user.shift[[, 'sessions_keyboardists', 'sessions_violinists', 'sessions_worship_leaders'][user.type]].filter(session => {
-                    return session.attendance = user.attendances.find(attendance => attendance.session_id === session.id);
-                });
-
-                return user;
-            }
-        },
         ongoingIndex() {
             let index = [];
 
@@ -624,15 +695,11 @@ export default {
                     let attendance = user.attendances.find(
                         (attendance) =>
                             attendance.session_id ===
-                            this.ongoingShifts.keyboardists
-                                .ongoing_session_keyboardists
+                            this.ongoingShifts.keyboardists.ongoing_session_keyboardists
                     );
 
                     if (attendance !== undefined) {
-                        if (
-                            attendance.start !== null &&
-                            attendance.end == null
-                        ) {
+                        if (attendance.start !== null && attendance.end == null) {
                             clockedIn.push(user.id);
                         }
                     }
@@ -654,15 +721,11 @@ export default {
                     let attendance = user.attendances.find(
                         (attendance) =>
                             attendance.session_id ===
-                            this.ongoingShifts.worship_leaders
-                                .ongoing_session_worship_leaders
+                            this.ongoingShifts.worship_leaders.ongoing_session_worship_leaders
                     );
 
                     if (attendance !== undefined) {
-                        if (
-                            attendance.start !== null &&
-                            attendance.end == null
-                        ) {
+                        if (attendance.start !== null && attendance.end == null) {
                             clockedIn.push(user.id);
                         }
                     }
@@ -684,15 +747,11 @@ export default {
                     let attendance = user.attendances.find(
                         (attendance) =>
                             attendance.session_id ===
-                            this.ongoingShifts.violinists
-                                .ongoing_session_violinists
+                            this.ongoingShifts.violinists.ongoing_session_violinists
                     );
 
                     if (attendance !== undefined) {
-                        if (
-                            attendance.start !== null &&
-                            attendance.end == null
-                        ) {
+                        if (attendance.start !== null && attendance.end == null) {
                             clockedIn.push(user.id);
                         }
                     }
@@ -739,6 +798,7 @@ export default {
     line-break: strict;
     transition: all 0.5s;
     padding: 1rem;
+    width: 100% !important;
 }
 
 .vs-card-content {

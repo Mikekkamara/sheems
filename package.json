@@ -12,7 +12,6 @@
         "test": "peeky run"
     },
     "devDependencies": {
-        "@peeky/test": "^0.13.5",
         "@popperjs/core": "^2.10.2",
         "@vue/compiler-sfc": "^3.2.30",
         "axios": "^0.21",
@@ -32,10 +31,7 @@
     },
     "dependencies": {
         "@babel/polyfill": "^7.11.5",
-        "autoprefixer": "10.4.5",
         "bootstrap-vue": "^2.22.0",
-        "gsap": "^3.11.4",
-        "primevue": "^2.9.2",
         "vue-router": "^3.0.1",
         "vue-timeago": "5.0.0",
         "vuesax": "^4.0.1-alpha.25"
