@@ -145,7 +145,7 @@ class UserController extends Controller
             'title' => $request->input('title'),
             'type' => $request->input('type'),
             'user_number' => Str::random(2),
-            'shift_leader' => $request->input('shift_leader'),
+            'shift_leader' => $request->input('shift_leader') === 'on' ? true : false,
             'phone_number' => $request->input('phone_number'),
             'from' => $request->input('from'),
             'shift_id' => $request->input('shift')

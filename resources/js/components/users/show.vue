@@ -61,22 +61,29 @@
                 <vs-card>
                     <template #title>
                         <div class="d-flex flex-row align-items-center gap-1">
-                            <span class="badge bg-secondary p-1" style="font-size: smaller">
+                            <span v-if="user.title > 0" class="badge bg-secondary p-1" style="font-size: smaller">
                                 {{ titles[user.title] }}
                             </span>
-                            <span class="d-flex flex-row align-items-center gap-1" v-if="user.type === 0">
+                            <span v-if="user.shift_leader" class="badge bg-dark p-1" style="font-size: smaller">
+                                Shift Leader
+                            </span>
+                            <span class="d-flex flex-row align-items-center gap-1" v-b-tooltip.hover
+                                title="Data Analyst" v-if="user.type === 0">
                                 <span> &bull; </span>
                                 <i class="fa-duotone fa-face-glasses h5 m-0"></i>
                             </span>
-                            <span class="d-flex flex-row align-items-center gap-1" v-else-if="user.type === 1">
+                            <span class="d-flex flex-row align-items-center gap-1" v-b-tooltip.hover.top
+                                title="Keyboardist" v-else-if="user.type === 1">
                                 <span> &bull; </span>
                                 <i class="fa-duotone fa-piano-keyboard h5 m-0"></i>
                             </span>
-                            <span class="d-flex flex-row align-items-center gap-1" v-else-if="user.type === 2">
+                            <span class="d-flex flex-row align-items-center gap-1" v-b-tooltip.hover
+                                title="Worship Leader" v-else-if="user.type === 2">
                                 <span> &bull; </span>
                                 <i class="fa-duotone fa-microphone-stand h5 m-0"></i>
                             </span>
-                            <span class="d-flex flex-row align-items-center gap-1" v-else-if="user.type === 3">
+                            <span class="d-flex flex-row align-items-center gap-1" v-b-tooltip.hover title="Violinists"
+                                v-else-if="user.type === 3">
                                 <span> &bull; </span>
                                 <i class="fa-duotone fa-violin h5 m-0"></i>
                             </span>
@@ -86,9 +93,11 @@
                         </h3>
                     </template>
                     <template #img>
-                        <b-img src="../../../../storage/assets/woman-g5474d9095_1920.jpg" alt=""></b-img>
-                        <!-- <b-img :src="`../../../../storage/profile/${user.profile}`"
-                            :alt="`${user.profile} profile picture`"></b-img> -->
+                        <b-img v-if="user.profile.includes('default.png')"
+                            :src="`https://avatars.dicebear.com/api/identicon/${user.name.split(' ')[0]}.svg`"
+                            :alt="`${user.name}'s profile picture`"></b-img>
+                        <b-img v-else :src="`../../../../storage/profile/${user.profile}`"
+                            :alt="`${user.profile} profile picture`"></b-img>
                     </template>
                     <template #text>
                         <p>
@@ -346,7 +355,8 @@
                             </select>
                         </div>
                         <div v-if="create === false" class="flex-grow-1 mt-5" style="max-width: 50%">
-                            <vs-switch :disabled="shiftLeaderExists(createForm.type, createForm.shift)"
+                            <vs-switch @change="updateProfile" name="shift_leader"
+                                :disabled="shiftLeaderExists(createForm.type, createForm.shift)"
                                 v-model="createForm.shift_leader" dark>
                                 <span class="fs-6 fw-bold" :key="`${createForm.shift_leader}-shift-leader`">
                                     <i class='fa-duotone'
@@ -464,6 +474,7 @@ export default {
             let form = document.querySelector('#createUserForm');
 
             let updateForm = new FormData(form);
+
 
             let payload = {
                 id: this.createForm.user_id,
