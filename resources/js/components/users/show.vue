@@ -311,7 +311,7 @@
                                 <i class="fa-duotone fa-signature"></i>
                                 <span class="m-2">Name</span>
                             </h5>
-                            <vs-input @change="updateProfile" type="text" name="name"
+                            <vs-input @change="updateProfile" type="text" class="text-capitalize" name="name"
                                 v-model="createForm.name"></vs-input>
                         </div>
                         <div class="flex-grow-1">

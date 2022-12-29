@@ -25,15 +25,15 @@ class InitAppSeeder extends Seeder
             'name' => 'Shift B'
         ]);
 
-        User::create([
-            'name' => 'Michael Kamara',
-            'email' => 'mikekkamara@gmail.com',
-            'type' => 2,
-            'user_number' => Str::random(2),
-            'phone_number' => '+254704120644',
-            'from' => 'Murang\'a',
-            'shift_id' => $shift->id,
-            'password' => Hash::make('sheems1_sheems!@#')
-        ]);
+        // User::create([
+        //     'name' => 'Michael Kamara',
+        //     'email' => 'mikekkamara@gmail.com',
+        //     'type' => 2,
+        //     'user_number' => Str::random(2),
+        //     'phone_number' => '+254704120644',
+        //     'from' => 'Murang\'a',
+        //     'shift_id' => $shift->id,
+        //     'password' => Hash::make('sheems1_sheems!@#')
+        // ]);
     }
 }
