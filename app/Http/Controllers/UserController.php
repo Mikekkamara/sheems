@@ -57,7 +57,7 @@ class UserController extends Controller
                         }
                     }
                 }
-            }else if(!$shift->ongoing_session_violinists  === null){
+            }else if(!(empty($shift->ongoing_session_violinists))){
                 foreach($users as $user){
                     if(!($user->shift_id === $shift->id)){
                         continue;
@@ -76,7 +76,7 @@ class UserController extends Controller
                         }
                     }
                 }
-            }else if(!$shift->ongoing_session_worship_leaders  === null){
+            }else if(!(empty($shift->ongoing_session_worship_leaders))){
                 foreach($users as $user){
                     if(!($user->shift_id === $shift->id)){
                         continue;
