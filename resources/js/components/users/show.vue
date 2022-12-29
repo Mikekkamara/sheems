@@ -134,7 +134,7 @@
                         <vs-button danger icon @click="editDetails(user)">
                             <i class="fa-duotone fa-pen h5 m-0"></i>
                         </vs-button>
-                        <vs-button danger icon @click="showAttendanceUser(user.id)">
+                        <vs-button danger icon v-if="user.type !== 0" @click="showAttendanceUser(user.id)">
                             <i class="fa-duotone fa-eye h5 m-0"></i>
                         </vs-button>
                     </template>
@@ -152,28 +152,48 @@
             </div>
         </div>
         <!-- Show attendance modal -->
-        <b-modal v-if="attendanceUser" id="attendance-modal" size="lg" scrollable centered hide-footer hide-header
+        <b-modal id="attendance-modal" size="lg" scrollable centered hide-footer hide-header
             content-class="template-modal" header-class="template-modal-header">
             <div class="d-flex flex-row justify-content-end" style="position: sticky; top: 0; z-index: 20">
                 <vs-button danger icon circle @click="hideAttendances()">
                     <i class="fa-duotone fa-times-circle h5 m-0"></i>
                 </vs-button>
             </div>
-            <div>
+            <div v-if="Object.keys(attendanceUser).length > 0">
                 <!-- <h3 class="font-monospace">{{ attendanceUser.name }}'s Attendance History</h3> -->
                 <div>
-                    <b-avatar size="100" src="../../../../storage/assets/woman-g5474d9095_1920.jpg" alt=""></b-avatar>
+                    <b-avatar v-if="attendanceUser.profile.includes('default.png')" size="100"
+                        :src="`https://avatars.dicebear.com/api/identicon/${attendanceUser.name.split(' ')[0]}.svg`"
+                        :alt="`${attendanceUser.name}'s profile picture`"></b-avatar>
+                    <b-avatar v-else size="100" :src="`../../../../storage/profile/${attendanceUser.profile}`"
+                        :alt="`${attendanceUser.profile} profile picture`"></b-avatar>
                     <p class="mt-2 mb-0 d-flex flex-row gap-1 align-items-center">
-                        <span class="badge bg-secondary p-1" style="font-size: smaller">
-                            {{ attendanceUser.title }}
-                            <!-- Pastor -->
+                        <span v-if="attendanceUser.title > 0" class="badge bg-secondary p-1" style="font-size: smaller">
+                            {{ titles[attendanceUser.title] }}
                         </span>
-                        <span> &bull; </span>
-                        <i class="fa-duotone fa-microphone-stand h5 m-0"></i>
-                        <span> &bull; </span>
-                        <i class="fa-duotone fa-piano-keyboard h5 m-0"></i>
-                        <span> &bull; </span>
-                        <i class="fa-duotone fa-violin h5 m-0"></i>
+                        <span v-if="attendanceUser.shift_leader" class="badge bg-dark p-1" style="font-size: smaller">
+                            Shift Leader
+                        </span>
+                        <span class="d-flex flex-row align-items-center gap-1" v-b-tooltip.hover title="Data Analyst"
+                            v-if="attendanceUser.type === 0">
+                            <span> &bull; </span>
+                            <i class="fa-duotone fa-face-glasses h5 m-0"></i>
+                        </span>
+                        <span class="d-flex flex-row align-items-center gap-1" v-b-tooltip.hover.top title="Keyboardist"
+                            v-else-if="attendanceUser.type === 1">
+                            <span> &bull; </span>
+                            <i class="fa-duotone fa-piano-keyboard h5 m-0"></i>
+                        </span>
+                        <span class="d-flex flex-row align-items-center gap-1" v-b-tooltip.hover title="Worship Leader"
+                            v-else-if="attendanceUser.type === 2">
+                            <span> &bull; </span>
+                            <i class="fa-duotone fa-microphone-stand h5 m-0"></i>
+                        </span>
+                        <span class="d-flex flex-row align-items-center gap-1" v-b-tooltip.hover title="Violinists"
+                            v-else-if="attendanceUser.type === 3">
+                            <span> &bull; </span>
+                            <i class="fa-duotone fa-violin h5 m-0"></i>
+                        </span>
                     </p>
                     <span class="h3 m-0 mt-2 fw-bold d-block">
                         {{ attendanceUser.name }}
@@ -188,6 +208,9 @@
                         <i class="fa-duotone fa-clock-rotate-left"></i>
                         Attendance History
                     </p>
+                </div>
+                <div v-if="attendanceUser.sessions.length === 0">
+                    This shift has had no sessions yet
                 </div>
                 <div class="rounded-3 bg-light p-2 my-2" v-for="session in attendanceUser.sessions" :key="session.id">
                     <span>
