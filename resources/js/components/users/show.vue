@@ -610,7 +610,6 @@ export default {
                         attendance.session_id ===
                         this.ongoingShifts.keyboardists.ongoing_session_keyboardists
                 );
-                console.log('keyboardists', user, attendance)
                 if (attendance) {
                     if (attendance.start !== null && attendance.end !== null) {
                         return false;
@@ -627,7 +626,6 @@ export default {
                         attendance.session_id ===
                         this.ongoingShifts.violinists.ongoing_session_violinists
                 );
-                console.log('violinists', user, attendance)
                 if (attendance) {
 
                     if (attendance.start !== null && attendance.end !== null) {
@@ -645,7 +643,6 @@ export default {
                         attendance.session_id ===
                         this.ongoingShifts.worship_leaders.ongoing_session_worship_leaders
                 );
-                console.log('worship_leaders', user, attendance)
                 if (attendance.start !== null && attendance.end !== null) {
                     return false;
                 }
