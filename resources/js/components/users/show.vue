@@ -770,7 +770,17 @@ export default {
         async checkInUser(userId) {
             await this.$store
                 .dispatch("checkIn", userId)
-                .then((checkInResponse) => {
+                .then(async (checkInResponse) => {
+                    this.$store.dispatch('getShifts');
+
+                    let query = this.$route.query.type;
+
+                    if (query) {
+                        await this.$store.dispatch("getUsers", query);
+                    } else {
+                        await this.$store.dispatch("getUsers");
+                    }
+
                     this.$vs.notification({
                         content: SuccessClock,
                         duration: 6000,
@@ -786,7 +796,18 @@ export default {
         async checkOutUser(userId) {
             await this.$store
                 .dispatch("checkOut", userId)
-                .then((checkOutResponse) => {
+                .then(async (checkOutResponse) => {
+
+                    this.$store.dispatch('getShifts');
+
+                    let query = this.$route.query.type;
+
+                    if (query) {
+                        await this.$store.dispatch("getUsers", query);
+                    } else {
+                        await this.$store.dispatch("getUsers");
+                    }
+
                     this.$vs.notification({
                         content: SuccessClock,
                         duration: 6000,

@@ -194,16 +194,12 @@ export default{
         },
         async checkIn(context, payload){
             return await axios.get(`/api/v1/users/check-in/${payload}`).then(async res => {
-                await context.dispatch('getUsers');
-                await context.dispatch('getShifts');
                 context.commit('setLatest', payload);
                 return res;
             });
         },
         async checkOut(context, payload){
             return await axios.get(`/api/v1/users/check-out/${payload}`).then(async res => {
-                await context.dispatch('getUsers');
-                await context.dispatch('getShifts');
                 context.commit('setLatest', payload);
                 return res;
             });
