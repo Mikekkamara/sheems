@@ -37,70 +37,69 @@ class UserController extends Controller
     public function addUserCheck($users){
         $shifts = Shift::where('ongoing', true)->get();
 
+        if(count($shifts) === 0){
+            foreach($users as $user){
+                $user->checkIn = 4;
+            }
+
+            return $users;
+        }
         foreach($shifts as $shift){
             if(!empty($shift->ongoing_session_keyboardists)){
                 foreach($users as $user){
-                    if(!($user->shift_id === $shift->id)){
-                        continue;
-                    }
-                    if($user->type === 1){
-                        $attendance = Attendance::where('user_id', $user->id)->where('session_id',$shift->ongoing_session_keyboardists)->first();
-                        // 0 0
-                        // 1 0
-                        // 1 1
-                        if(empty($attendance->start) && empty($attendance->end)){
-                            $user->checkIn = 1;
-                        }else if(!(empty($attendance->start)) && empty($attendance->end)){
-                            $user->checkIn = 2;
-                        }else if(!(empty($attendance->start)) && !(empty($attendance->end))){
-                            $user->checkIn = 3;
+                    if($user->shift_id === $shift->id){
+                        if($user->type === 1){
+                            $attendance = Attendance::where('user_id', $user->id)->where('session_id',$shift->ongoing_session_keyboardists)->first();
+                            // 0 0
+                            // 1 0
+                            // 1 1
+                            if(empty($attendance->start) && empty($attendance->end)){
+                                $user->checkIn = 1;
+                            }else if(!(empty($attendance->start)) && empty($attendance->end)){
+                                $user->checkIn = 2;
+                            }else if(!(empty($attendance->start)) && !(empty($attendance->end))){
+                                $user->checkIn = 3;
+                            }
                         }
                     }
                 }
             }
             if(!(empty($shift->ongoing_session_violinists))){
                 foreach($users as $user){
-                    if(!($user->shift_id === $shift->id)){
-                        continue;
-                    }
-                    if($user->type === 3){
-                        $attendance = Attendance::where('user_id', $user->id)->where('session_id',$shift->ongoing_session_violinists)->first();
-                        // 0 0
-                        // 1 0
-                        // 1 1
-                        if(empty($attendance->start) && empty($attendance->end)){
-                            $user->checkIn = 1;
-                        }else if(!(empty($attendance->start)) && empty($attendance->end)){
-                            $user->checkIn = 2;
-                        }else if(!(empty($attendance->start)) && !(empty($attendance->end))){
-                            $user->checkIn = 3;
+                    if($user->shift_id === $shift->id){
+                        if($user->type === 3){
+                            $attendance = Attendance::where('user_id', $user->id)->where('session_id',$shift->ongoing_session_violinists)->first();
+                            // 0 0
+                            // 1 0
+                            // 1 1
+                            if(empty($attendance->start) && empty($attendance->end)){
+                                $user->checkIn = 1;
+                            }else if(!(empty($attendance->start)) && empty($attendance->end)){
+                                $user->checkIn = 2;
+                            }else if(!(empty($attendance->start)) && !(empty($attendance->end))){
+                                $user->checkIn = 3;
+                            }
                         }
                     }
                 }
             }
             if(!(empty($shift->ongoing_session_worship_leaders))){
                 foreach($users as $user){
-                    if(!($user->shift_id === $shift->id)){
-                        continue;
-                    }
-                    if($user->type === 2){
-                        $attendance = Attendance::where('user_id', $user->id)->where('session_id',$shift->ongoing_session_worship_leaders)->first();
-                        // 0 0
-                        // 1 0
-                        // 1 1
-                        if(empty($attendance->start) && empty($attendance->end)){
-                            $user->checkIn = 1;
-                        }else if(!(empty($attendance->start)) && empty($attendance->end)){
-                            $user->checkIn = 2;
-                        }else if(!(empty($attendance->start)) && !(empty($attendance->end))){
-                            $user->checkIn = 3;
+                    if($user->shift_id === $shift->id){
+                        if($user->type === 2){
+                            $attendance = Attendance::where('user_id', $user->id)->where('session_id',$shift->ongoing_session_worship_leaders)->first();
+                            // 0 0
+                            // 1 0
+                            // 1 1
+                            if(empty($attendance->start) && empty($attendance->end)){
+                                $user->checkIn = 1;
+                            }else if(!(empty($attendance->start)) && empty($attendance->end)){
+                                $user->checkIn = 2;
+                            }else if(!(empty($attendance->start)) && !(empty($attendance->end))){
+                                $user->checkIn = 3;
+                            }
                         }
                     }
-                }
-            }
-            if(empty($shift->ongoing_session_worship_leaders) && empty($shift->ongoing_session_violinists) && empty($shift->ongoing_session_violinists)){
-                foreach($users as $user){
-                    $user->checkIn = 4;
                 }
             }
         }
