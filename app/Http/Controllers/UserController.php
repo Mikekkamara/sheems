@@ -57,7 +57,8 @@ class UserController extends Controller
                         }
                     }
                 }
-            }else if(!(empty($shift->ongoing_session_violinists))){
+            }
+            if(!(empty($shift->ongoing_session_violinists))){
                 foreach($users as $user){
                     if(!($user->shift_id === $shift->id)){
                         continue;
@@ -76,7 +77,8 @@ class UserController extends Controller
                         }
                     }
                 }
-            }else if(!(empty($shift->ongoing_session_worship_leaders))){
+            }
+            if(!(empty($shift->ongoing_session_worship_leaders))){
                 foreach($users as $user){
                     if(!($user->shift_id === $shift->id)){
                         continue;
@@ -95,7 +97,8 @@ class UserController extends Controller
                         }
                     }
                 }
-            }else{
+            }
+            if(empty($shift->ongoing_session_worship_leaders) && empty($shift->ongoing_session_violinists) && empty($shift->ongoing_session_violinists)){
                 foreach($users as $user){
                     $user->checkIn = 4;
                 }
