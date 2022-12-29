@@ -30,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/keyboardists', [UserController::class, 'keyboardists']);
         Route::get('/worship-leaders', [UserController::class, 'worshipLeaders']);
         Route::post('/update/{id}', [UserController::class, 'update']);
+        Route::post('/delete', [UserController::class, 'destroy']);
         Route::post('/profile', [UserController::class, 'updateProfile']);
         Route::post('/create', [UserController::class, 'store']);
         Route::get('/check-in/{id}', [AttendanceController::class, 'checkIn']);

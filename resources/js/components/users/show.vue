@@ -38,7 +38,7 @@
                 </vs-button>
             </div>
             <div>
-                <vs-button style="max-width: fit-content" @click="$bvModal.show('user-modal')" warn flat>
+                <vs-button style="max-width: fit-content" @click="showCreateForm" warn flat>
                     <h6 class="fw-bold m-0">
                         <i class="fa-duotone fa-person-circle-plus"></i>
                         <span class="p-1 d-none d-md-inline"> Create User </span>
@@ -131,16 +131,47 @@
                         </div>
                     </template>
                     <template #interactions>
-                        <vs-button danger icon @click="editDetails(user)">
+                        <vs-button v-b-tooltip.hover title="Edit Details" danger icon @click="editDetails(user)">
                             <i class="fa-duotone fa-pen h5 m-0"></i>
                         </vs-button>
-                        <vs-button danger icon v-if="user.type !== 0" @click="showAttendanceUser(user.id)">
+                        <vs-button v-b-tooltip.hover title="Show Attendance" danger icon v-if="user.type !== 0"
+                            @click="showAttendanceUser(user.id)">
                             <i class="fa-duotone fa-eye h5 m-0"></i>
+                        </vs-button>
+                        <vs-button @click="(removeUser.show = !removeUser.show) && (removeUser.user_id = user.id)" warn
+                            icon v-b-tooltip.hover title="Delete User">
+                            <i class="fa-duotone fa-trash h5 m-0"></i>
                         </vs-button>
                     </template>
                 </vs-card>
             </li>
         </transition-group>
+        <vs-dialog width="300px" not-center v-model="removeUser.show">
+            <template #header>
+                <h4 class="text-danger h4 fw-bold mt-3">
+                    Please Confirm
+                </h4>
+            </template>
+            <p class="lead h6">
+                This action cannot be undone!
+            </p>
+
+            <template #footer>
+                <div class="d-flex flex-row align-items-center gap-2 ">
+                    <vs-button :loading="removeUser.loading" danger transparent
+                        @click="(removeUser.loading = true) && deleteUser()">
+                        <span class="h6 m-0">
+                            Delete
+                        </span>
+                    </vs-button>
+                    <vs-button dark flat @click="(removeUser.show = !removeUser.show) && (removeUser.user_id = '')">
+                        <span class="h6 m-0">
+                            Cancel
+                        </span>
+                    </vs-button>
+                </div>
+            </template>
+        </vs-dialog>
         <div v-if="allUsers.length === 0" class="p-2 m-1 rounded-3 bg-light">
             <div class="d-flex flex-row flex-wrap gap-1 align-items-center">
                 <span>
@@ -389,8 +420,14 @@
                             </vs-switch>
                         </div>
                     </div>
+                    <div v-if="errors">
+                        <p class="h6 text-danger">
+                            Please fill all required fields.
+                        </p>
+                    </div>
                     <div v-if="create" class="d-flex flex-wrap flex-row items-center gap-3 mt-5">
-                        <vs-button @click="createUser" dark block style="max-width: 50%" class="mx-auto">
+                        <vs-button @click="createUser" :loading="createForm.loading" dark block style="max-width: 50%"
+                            class="mx-auto">
                             <h5 class="m-0 fw-bold">
                                 <span> Create </span>
                                 <i class="fa-duotone fa-arrow-right"></i>
@@ -415,12 +452,19 @@ export default {
     data() {
         return {
             loading: true,
+            active2: false,
             search: "",
             data: [],
             attendance: "",
             attendanceUser: {},
             create: true,
             errors: false,
+            removeUser: {
+                show: false,
+                user_id: '',
+                loading: false,
+                deleted: false
+            },
             createForm: {
                 user_id: '',
                 name: '',
@@ -437,6 +481,40 @@ export default {
         };
     },
     methods: {
+        showCreateForm() {
+            this.create = true;
+
+            this.createForm = {
+                user_id: '',
+                name: '',
+                email: '',
+                profile: '',
+                from: '',
+                type: 2,
+                title: 0,
+                shift_leader: false,
+                shift: '',
+                phone: '',
+                loading: false
+            };
+            this.$bvModal.show('user-modal');
+        },
+        async deleteUser() {
+            let query = this.$route.query.type;
+
+            if (query) {
+                await this.$store.dispatch('deleteUser', { user_id: this.removeUser.user_id, type: query })
+            } else {
+                await this.$store.dispatch('deleteUser', { user_id: this.removeUser.user_id });
+            }
+            this.removeUser.deleted = true;
+            this.removeUser.loading = false;
+            this.removeUser.show = false;
+            this.$vs.notification({
+                content: SuccessClock,
+                duration: 6000,
+            });
+        },
         shiftLeaderExists(type, shiftId) {
             let shift = this.allShifts[[, 'keyboardists', 'worship_leaders', 'violinists'][type]].find(shift => shift.id === shiftId);
 
@@ -472,15 +550,23 @@ export default {
 
                         let file = this.$refs.profile.files[0];
 
-                        await this.uploadProfilePicture().then(res => {
-                            this.$vs.notification({
-                                content: SuccessClock,
-                                duration: 6000,
+                        if (file) {
+                            await this.uploadProfilePicture().then(res => {
+                                this.$vs.notification({
+                                    content: SuccessClock,
+                                    duration: 6000,
+                                });
                             });
-                        });
+
+                        }
                         this.createForm.loading = false;
 
-                        this.$bvModal.hide('add-user');
+                        this.$bvModal.hide('user-modal');
+
+                        this.$vs.notification({
+                            content: SuccessClock,
+                            duration: 6000,
+                        });
 
                     } catch (error) {
                         return true;

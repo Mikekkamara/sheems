@@ -53,7 +53,22 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $data = [];
+        $length = [];
+        foreach($data as $key => $user){
+            // array_push($length, count($user));
+            $user = User::create([
+                'name' => $user[0],
+                'title' => $key === 10 ? 3 : 0,
+                'type' => 2,
+                'user_number' => Str::random(2),
+                'phone_number' => $user[3],
+                'from' => $user[1],
+                'shift_id' => '560f64c5-25a0-45fa-9b04-5d0d39f07e8c',
+                'password' => Hash::make('secret')
+            ]);
+        }
+        return 'completed';
     }
 
     /**
@@ -160,8 +175,8 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        return User::find($request->input('user_id'))->delete();
     }
 }

@@ -1,10 +1,16 @@
 <template>
     <div class="p-2">
-        <div class="d-flex flex-row items-center p-2 mb-1 gap-2">
+        <div class="d-flex flex-row flex-wrap items-center p-2 mb-1 gap-2">
             <vs-switch v-model="filters.checkedIn" dark>
                 <span class="fs-6 fw-bold" :key="`${filters.checkedIn}-checked-in`">
                     <i class='fa-duotone' :class="[filters.checkedIn ? 'fa-check' : 'fa-times']"></i>
-                    {{ filters.checkedIn ? 'Checked In' : 'All' }}
+                    Checked In
+                </span>
+            </vs-switch>
+            <vs-switch v-model="filters.absent" danger>
+                <span class="fs-6 fw-bold" :key="`${filters.absent}-absent`">
+                    <i class='fa-duotone' :class="[filters.absent ? 'fa-check' : 'fa-times']"></i>
+                    Absent
                 </span>
             </vs-switch>
             <vs-switch v-model="filters.shiftA" dark>
@@ -36,7 +42,8 @@ export default {
         return {
             search: '',
             filters: {
-                checkedIn: false,
+                checkedIn: true,
+                absent: true,
                 shiftA: true,
                 shiftB: true
             },

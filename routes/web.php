@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -21,9 +22,7 @@ Route::get('/', function () {
 
 Auth::routes([ 'register' =>  false ]);
 
-// Route::get('/users',function(){
-//     return 'hello world';
-// });
+// Route::get('/insert-users',[UserController::class, 'create']);
 Route::middleware('auth:sanctum')->group(function(){
     Route::get('/home',[HomeController::class, 'index']);
     Route::get('/users', [HomeController::class, 'index']);

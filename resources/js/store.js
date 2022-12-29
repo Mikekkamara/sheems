@@ -115,11 +115,18 @@ export default{
                     return true;
                 }
             }
+            if (payload.checkedIn !== payload.absent) {
+                if (payload.checkedIn === false && payload.absent === true) {
+                    state.users = state.users.filter(user => {
+                        return user.attendances.find(attendance => attendance.start === null && attendance.end === null);
+                    });
+                }
+                if (payload.checkedIn === true && payload.absent === false) {
 
-            if (payload.checkedIn) {
-                state.users = state.users.filter(user => {
-                    return user.attendances.find(attendance => attendance.start !== null && attendance.end == null);
-                });
+                    state.users = state.users.filter(user => {
+                        return user.attendances.find(attendance => attendance.start !== null && attendance.end == null);
+                    });
+                }
             }
 
             let searchUsers = localStorage.getItem('search');
@@ -145,6 +152,13 @@ export default{
         /**
          * Users
          */
+        async deleteUser(context, payload) {
+            return await axios.post('/api/v1/users/delete', {user_id:payload.user_id}).then(response => {
+
+                context.dispatch('getUsers', payload.type? payload.type: undefined);
+                return response;
+            });
+        },
         //Get users from api
         async getUsers(context, payload = undefined) {
             if (payload) {
