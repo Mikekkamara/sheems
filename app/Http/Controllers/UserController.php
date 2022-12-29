@@ -27,23 +27,97 @@ class UserController extends Controller
      */
     public function index()
     {
+        //first you need to know the ongoing sessions, then find out
+        //if a user's attendance of that session has been started or ended
         $users = User::with('attendances')->get();
-        return response($users, 200);
+
+        return response($this->addUserCheck($users), 200);
+    }
+
+    public function addUserCheck($users){
+        $shifts = Shift::where('ongoing', true)->get();
+
+        foreach($shifts as $shift){
+            if(!empty($shift->ongoing_session_keyboardists)){
+                foreach($users as $user){
+                    if(!($user->shift_id === $shift->id)){
+                        continue;
+                    }
+                    if($user->type === 1){
+                        $attendance = Attendance::where('user_id', $user->id)->where('session_id',$shift->ongoing_session_keyboardists)->first();
+                        // 0 0
+                        // 1 0
+                        // 1 1
+                        if(empty($attendance->start) && empty($attendance->end)){
+                            $user->checkIn = 1;
+                        }else if(!(empty($attendance->start)) && empty($attendance->end)){
+                            $user->checkIn = 2;
+                        }else if(!(empty($attendance->start)) && !(empty($attendance->end))){
+                            $user->checkIn = 3;
+                        }
+                    }
+                }
+            }else if(!$shift->ongoing_session_violinists  === null){
+                foreach($users as $user){
+                    if(!($user->shift_id === $shift->id)){
+                        continue;
+                    }
+                    if($user->type === 3){
+                        $attendance = Attendance::where('user_id', $user->id)->where('session_id',$shift->ongoing_session_violinists)->first();
+                        // 0 0
+                        // 1 0
+                        // 1 1
+                        if(empty($attendance->start) && empty($attendance->end)){
+                            $user->checkIn = 1;
+                        }else if(!(empty($attendance->start)) && empty($attendance->end)){
+                            $user->checkIn = 2;
+                        }else if(!(empty($attendance->start)) && !(empty($attendance->end))){
+                            $user->checkIn = 3;
+                        }
+                    }
+                }
+            }else if(!$shift->ongoing_session_worship_leaders  === null){
+                foreach($users as $user){
+                    if(!($user->shift_id === $shift->id)){
+                        continue;
+                    }
+                    if($user->type === 2){
+                        $attendance = Attendance::where('user_id', $user->id)->where('session_id',$shift->ongoing_session_worship_leaders)->first();
+                        // 0 0
+                        // 1 0
+                        // 1 1
+                        if(empty($attendance->start) && empty($attendance->end)){
+                            $user->checkIn = 1;
+                        }else if(!(empty($attendance->start)) && empty($attendance->end)){
+                            $user->checkIn = 2;
+                        }else if(!(empty($attendance->start)) && !(empty($attendance->end))){
+                            $user->checkIn = 3;
+                        }
+                    }
+                }
+            }else{
+                foreach($users as $user){
+                    $user->checkIn = 4;
+                }
+            }
+        }
+
+        return $users;
     }
 
     public function violinists(){
         $users = User::with('attendances')->where('type', 3)->get();
-        return response($users, 200);
+        return response($this->addUserCheck($users), 200);
     }
 
     public function keyboardists(){
         $users = User::with('attendances')->where('type', 1)->get();
-        return response($users, 200);
+        return response($this->addUserCheck($users), 200);
     }
 
     public function worshipLeaders(){
         $users = User::with('attendances')->where('type', 2)->get();
-        return response($users, 200);
+        return response($this->addUserCheck($users), 200);
     }
 
     /**

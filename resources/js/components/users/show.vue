@@ -116,18 +116,27 @@
     ongoingShifts.worship_leaders ||
     ongoingShifts.violinists
 ">
-                            <vs-button dark icon v-if="showAction(user, false)" @click="checkOutUser(user.id)">
+                            <vs-button dark icon v-if="user.checkIn === 2" @click="checkOutUser(user.id)">
                                 <h5 class="m-0 d-flex flex-row justify-content-center gap-2">
                                     <i class="fa-duotone fa-lightbulb-cfl text-warning fa-shake"></i>
                                     <span class="h6 m-0"> Check Out </span>
                                 </h5>
                             </vs-button>
-                            <vs-button dark icon v-if="showAction(user)" @click="checkInUser(user.id)">
+                            <vs-button dark icon v-if="user.checkIn === 1" @click="checkInUser(user.id)">
                                 <h5 class="m-0 d-flex flex-row justify-content-center gap-2">
                                     <i class="fa-duotone fa-lightbulb-cfl-on text-warning fa-fade"></i>
                                     <span class="h6 m-0"> Check In </span>
                                 </h5>
                             </vs-button>
+                            <span v-if="user.checkIn === 3"
+                                class="d-flex flex-row gap-1 align-items-center p-2 bg-light rounded-3 m-1">
+                                <span>
+                                    <i class="fa-duotone fa-party-horn fa-2x text-success"></i>
+                                </span>
+                                <span>
+                                    Checked Out of the ongoing shift
+                                </span>
+                            </span>
                         </div>
                     </template>
                     <template #interactions>
