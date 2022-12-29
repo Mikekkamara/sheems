@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->nullable();
             $table->smallInteger('title')->default(0);
             $table->integer('type')->default(3);
-            $table->string('user_number')->unique();
+            $table->string('user_number')->nullable();
             $table->boolean('shift_leader')->default(false);
             $table->string('phone_number')->nullable();
             $table->string('from')->nullable();
