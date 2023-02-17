@@ -29,7 +29,7 @@ class UserController extends Controller
     {
         //first you need to know the ongoing sessions, then find out
         //if a user's attendance of that session has been started or ended
-        $users = User::with('attendances')->get();
+        $users = User::with('attendances')->orderBy('name')->get();
 
         return response($this->addUserCheck($users), 200);
     }
@@ -108,17 +108,17 @@ class UserController extends Controller
     }
 
     public function violinists(){
-        $users = User::with('attendances')->where('type', 3)->get();
+        $users = User::with('attendances')->where('type', 3)->orderBy('name')->get();
         return response($this->addUserCheck($users), 200);
     }
 
     public function keyboardists(){
-        $users = User::with('attendances')->where('type', 1)->get();
+        $users = User::with('attendances')->where('type', 1)->orderBy('name')->get();
         return response($this->addUserCheck($users), 200);
     }
 
     public function worshipLeaders(){
-        $users = User::with('attendances')->where('type', 2)->get();
+        $users = User::with('attendances')->where('type', 2)->orderBy('name')->get();
         return response($this->addUserCheck($users), 200);
     }
 

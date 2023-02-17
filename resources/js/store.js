@@ -100,21 +100,25 @@ export default{
         filter(state, payload) {
             state.users = state.usersSearch;
 
-            if (payload.shiftA !== payload.shiftB) {
-                try {
+            // if (payload.shiftA !== payload.shiftB) {
+            //     try {
 
-                    if ((payload.shiftA === false && payload.shiftB === true)) {
-                        let shiftBId = state.shifts.keyboardists.find(shift => shift.name === 'Shift B').id;
-                        state.users = state.users.filter(user => user.shift_id === shiftBId);
-                    }
-                    if ((payload.shiftA === true && payload.shiftB === false)) {
-                        let shiftAId = state.shifts.keyboardists.find(shift => shift.name === 'Shift A').id;
-                        state.users = state.users.filter(user => user.shift_id === shiftAId);
-                    }
-                } catch (error) {
-                    return true;
-                }
-            }
+            //         if ((payload.shiftA === false && payload.shiftB === true)) {
+            //             let shiftBId = state.shifts.keyboardists.find(shift => shift.name === 'Shift B').id;
+            //             state.users = state.users.filter(user => user.shift_id === shiftBId);
+            //         }
+            //         if ((payload.shiftA === true && payload.shiftB === false)) {
+            //             let shiftAId = state.shifts.keyboardists.find(shift => shift.name === 'Shift A').id;
+            //             state.users = state.users.filter(user => user.shift_id === shiftAId);
+            //         }
+            //         if ((payload.shiftC === true && payload.shiftC === false)) {
+            //             let shiftAId = state.shifts.keyboardists.find(shift => shift.name === 'Shift A').id;
+            //             state.users = state.users.filter(user => user.shift_id === shiftAId);
+            //         }
+            //     } catch (error) {
+            //         return true;
+            //     }
+            // }
             if (payload.checkedIn !== payload.absent) {
                 if (payload.checkedIn === false && payload.absent === true) {
                     state.users = state.users.filter(user => {

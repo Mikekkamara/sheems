@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\SessionController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -35,6 +36,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/create', [UserController::class, 'store']);
         Route::get('/check-in/{id}', [AttendanceController::class, 'checkIn']);
         Route::get('/check-out/{id}', [AttendanceController::class, 'checkOut']);
+    });
+
+    Route::prefix('sessions')->group(function(){
+        Route::get('/', [SessionController::class, 'sessionsKeyboardists']);
     });
 
     //Shifts

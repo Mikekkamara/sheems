@@ -26,4 +26,5 @@ Auth::routes([ 'register' =>  false ]);
 Route::middleware('auth:sanctum')->group(function(){
     Route::get('/home',[HomeController::class, 'index']);
     Route::get('/users', [HomeController::class, 'index']);
+    Route::get('/reports', [HomeController::class, 'index']);
 });

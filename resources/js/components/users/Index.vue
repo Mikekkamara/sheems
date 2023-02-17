@@ -106,8 +106,7 @@
                         </template>
                         <span class="m-2 d-block">
                             Started:
-                            <timeago
-                                :datetime="new Date(Date.parse(ongoingShifts.keyboardists.session_keyboardists.start))"
+                            <timeago :datetime="new Date(Date.parse(ongoingShifts.keyboardists.session_keyboardists.start))"
                                 :auto-update="60">
                             </timeago>
                         </span>
@@ -127,16 +126,16 @@
                                     </span>
                                 </h6>
                             </vs-button>
-                            <vs-button dark :loading="shift.loading.keyboardists.goToNext"
-                                @click="goToNext(ongoingShifts.keyboardists.id, 1)">
+                            <vs-button
+                                v-for="otherShift in allShifts.keyboardists.filter(shift => shift.id !== ongoingShifts.keyboardists.id)"
+                                dark :loading="shift.loading.keyboardists.goToNext" :key="otherShift.id"
+                                @click="goToNext(otherShift.id, 1)">
                                 <h6 class="fw-bold m-0">
                                     <i class="fa-duotone fa-ban"></i>
                                     <i class="fa-duotone fa-forward"></i>
                                     <span class="p-1">
                                         End Shift and Commence
-                                        {{ allShifts.keyboardists.find(shift => shift.id !==
-        ongoingShifts.keyboardists.id).name
-}}
+                                        {{ otherShift.name }}
                                     </span>
                                 </h6>
                             </vs-button>
@@ -213,16 +212,16 @@
                                     </span>
                                 </h6>
                             </vs-button>
-                            <vs-button dark :loading="shift.loading.violinists.goToNext"
-                                @click="goToNext(ongoingShifts.violinists.id, 3)">
+                            <vs-button
+                                v-for="otherShift in allShifts.violinists.filter(shift => shift.id !== ongoingShifts.violinists.id)"
+                                dark :loading="shift.loading.violinists.goToNext" :key="otherShift.id"
+                                @click="goToNext(otherShift.id, 3)">
                                 <h6 class="fw-bold m-0">
                                     <i class="fa-duotone fa-ban"></i>
                                     <i class="fa-duotone fa-forward"></i>
                                     <span class="p-1">
                                         End Shift and Commence
-                                        {{ allShifts.violinists.find(shift => shift.id !==
-        ongoingShifts.violinists.id).name
-}}
+                                        {{ otherShift.name }}
                                     </span>
                                 </h6>
                             </vs-button>
@@ -299,16 +298,16 @@
                                     </span>
                                 </h6>
                             </vs-button>
-                            <vs-button dark :loading="shift.loading.worshipLeaders.goToNext"
-                                @click="goToNext(ongoingShifts.worship_leaders.id, 2)">
+                            <vs-button
+                                v-for="otherShift in allShifts.worship_leaders.filter(shift => shift.id !== ongoingShifts.worship_leaders.id)"
+                                dark :loading="shift.loading.worshipLeaders.goToNext" :key="otherShift.id"
+                                @click="goToNext(otherShift.id, 2)">
                                 <h6 class="fw-bold m-0">
                                     <i class="fa-duotone fa-ban"></i>
                                     <i class="fa-duotone fa-forward"></i>
                                     <span class="p-1">
                                         End Shift and Commence
-                                        {{ allShifts.worship_leaders.find(shift => shift.id !==
-        ongoingShifts.worship_leaders.id).name
-                                        }}
+                                        {{ otherShift.name }}
                                     </span>
                                 </h6>
                             </vs-button>
