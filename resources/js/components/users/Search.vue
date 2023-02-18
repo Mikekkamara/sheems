@@ -66,25 +66,7 @@ export default {
         ...mapGetters(["allShifts"])
     },
     mounted() {
-        if (!Object.keys(JSON.parse(localStorage.getItem('filters'))).includes('absent')) {
-            localStorage.removeItem('filters');
-        }
-        this.$store.subscribe((mutation, state) => {
-            if (mutation.type === 'setUsers') {
-                let storedFilters = localStorage.getItem('filters');
-                if (storedFilters) {
-
-                    // console.log(Object.keys(this.filters).includes('absent'))
-                    this.filters = JSON.parse(storedFilters);
-                }
-
-                let storedSearch = localStorage.getItem('search');
-
-                if (storedSearch) {
-                    this.search = storedSearch;
-                }
-            }
-        });
+        localStorage.clear();
 
     },
     methods: {
